@@ -1,0 +1,24 @@
+version: '3'
+
+volumes:
+  spider_news_volume:
+
+services:
+
+  news_spider:
+    build:
+      context: .
+      dockerfile: news_spider/Dockerfile
+    image: news_spider
+    container_name: news_spider
+    restart: unless-stopped
+    tty: True
+    working_dir: /news_spider
+
+  spider_news_mongo:
+    image: mongo
+    container_name: spider_news_mongo
+    restart: unless-stopped
+    tty: True
+    volumes:
+      - spider_news_volume:/data/spider_news_volume
