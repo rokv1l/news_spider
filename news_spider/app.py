@@ -1,8 +1,11 @@
 from spider_modules.mskagency import mskagency_parser
+from src.sсhedule_mp import IntervalJob, Scheduler
 
 
 def main():
-    mskagency_parser()
+    scheduler = Scheduler()
+    scheduler.add_job(IntervalJob('mskagency', mskagency_parser, delay=120))
+    scheduler.run_pending()
 
 
 if __name__ == '__main__':
