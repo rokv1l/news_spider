@@ -3,7 +3,7 @@ from time import sleep
 
 import requests
 from bs4 import BeautifulSoup
-from newspaper import Article, ArticleException
+from newspaper import Article
 
 from src.database import news_db_col
 
@@ -32,9 +32,13 @@ def mskagency_parser():
                 return
             else:
                 article = Article(news_url, language='ru')
-                article.download()
-                article.parse()
+                try:
+                    article.download()
+                    article.parse()
+                except Exception:
+                    continue
                 data = {
+                    'source': 'mskagency',
                     'url': news_url,
                     'title': article.title,
                     'content': article.text,
