@@ -46,7 +46,6 @@ def tass_parser():
                     'content': article.text,
                     'datetime': news_dt
                 }
-                print(data)
                 news_db_col.insert_one(data)
         offset += limit
         sleep(1)
