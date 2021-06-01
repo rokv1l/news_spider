@@ -23,7 +23,7 @@ def m24_parser():
             'content-type': 'application/json'
         }
         r = requests.get(url, params=params, headers=headers)
-        if r.status_code not in [i for i in range(200, 300)]:
+        if r.status_code != 200:
             print(f'm24 job ended at {datetime.datetime.now()}')
             return
         data = r.json()
@@ -34,7 +34,7 @@ def m24_parser():
             #     return
             article = Article(news_url, language='ru')
             r = requests.get(news_url)
-            if r.status_code not in [i for i in range(200, 300)]:
+            if r.status_code != 200:
                 print(f'm24 job ended at {datetime.datetime.now()}')
                 return
             soup = BeautifulSoup(r.text, 'lxml')

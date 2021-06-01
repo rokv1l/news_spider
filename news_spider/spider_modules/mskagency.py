@@ -15,7 +15,7 @@ def mskagency_parser():
         url = 'https://www.mskagency.ru'
         params = {'page': page, 'rnd': 1}
         r = requests.get(url, params=params)
-        if r.status_code not in [i for i in range(200, 300)]:
+        if r.status_code != 200:
             print(f'm24 job ended at {datetime.datetime.now()}')
             return
         soup = BeautifulSoup(r.text, 'lxml')
