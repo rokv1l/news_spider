@@ -47,8 +47,8 @@ def tass_parser():
                     'datetime': news_dt
                 }
                 news_db_col.insert_one(data)
+                sleep(1)
         offset += limit
-        sleep(1)
 
 
 if __name__ == '__main__':
