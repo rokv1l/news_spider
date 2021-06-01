@@ -20,7 +20,11 @@ def tass_parser():
             'tuplesLimit': limit,
             'newsOffset': offset,
         }
-        data = requests.get(url, params=params).json()
+        r = requests.get(url, params=params)
+        if r.status_code not in [i for i in range(200, 300)]:
+            print(f'm24 job ended at {datetime.datetime.now()}')
+            return
+        data = r.json()
         if not data.get('data') or not data.get('data').get('news'):
             return
         for article in data.get('data').get('news'):

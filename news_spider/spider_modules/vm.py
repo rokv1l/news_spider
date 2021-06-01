@@ -15,6 +15,9 @@ def vm_parser():
         url = 'https://vm.ru/listing/602f9dccea8b287bb9d8727d/news.html'
         params = {'page': page, 'limit': 40}
         r = requests.get(url, params=params)
+        if r.status_code not in [i for i in range(200, 300)]:
+            print(f'm24 job ended at {datetime.datetime.now()}')
+            return
         soup = BeautifulSoup(r.text, 'lxml')
         news_list = soup.find('div', {'class': 'listing news-listing'}).find_all('article')
         for news in news_list:
@@ -24,6 +27,9 @@ def vm_parser():
                 return
             else:
                 r = requests.get(news_url)
+                if r.status_code not in [i for i in range(200, 300)]:
+                    print(f'm24 job ended at {datetime.datetime.now()}')
+                    return
                 soup = BeautifulSoup(r.text, 'lxml')
                 str_time = soup.find('time', {'class': 'article-time'}).text
                 dt_now = datetime.datetime.now()
