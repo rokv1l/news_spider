@@ -7,6 +7,7 @@ from spider_modules.icmos import icmos_parser
 from spider_modules.mockva import mockva_parser
 from spider_modules.riamo import riamo_parser
 from spider_modules.ria import ria_parser
+from spider_modules.moslenta import moslenta_parser
 from src.sсhedule_mp import IntervalJob, Scheduler
 
 
@@ -20,6 +21,7 @@ def main():
     scheduler.add_job(IntervalJob('mockva', mockva_parser, delay=config.run_jobs_delay))
     scheduler.add_job(IntervalJob('riamo', riamo_parser, delay=config.run_jobs_delay))
     scheduler.add_job(IntervalJob('ria', ria_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('moslenta', moslenta_parser, delay=config.run_jobs_delay))
     scheduler.run_pending()
 
 
