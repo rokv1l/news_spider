@@ -8,35 +8,32 @@ import config
 from src.database import news_db_col
 
 
-def tass_parser():
-    print(f'tass job started at {datetime.datetime.now()}')
-    limit = 20
+def moslenta_parser():
+    print(f'moslenta job started at {datetime.datetime.now()}')
+    limit = 100
     offset = 0
     while True:
-        url = 'https://tass.ru/rubric/api/v1/rubric-articles'
+        url = 'https://moslenta.ru/api/v2/topics'
         params = {
-            'slug': 'moskva',
-            'type': 'all',
-            'step': 'NaN',
-            'tuplesLimit': limit,
-            'newsOffset': offset,
+            'limit': limit,
+            'offset': offset,
         }
         r = requests.get(url, params=params)
         if r.status_code != 200:
-            print(f'tass job ended at {datetime.datetime.now()}')
+            print(f'moslenta job ended at {datetime.datetime.now()}')
             return
         data = r.json()
-        if not data.get('data') or not data.get('data').get('news'):
+        if not data.get('data'):
             # что то не так
             return
-        for article in data.get('data').get('news'):
-            news_dt = datetime.datetime.fromtimestamp(article[0]['publishDate'])
+        for article in data.get('data'):
+            news_dt = datetime.datetime.fromisoformat(article['attributes']['published_at'][:-5])
             if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
-                print(f'tass job ended at {datetime.datetime.now()}')
+                print(f'moslenta job ended at {datetime.datetime.now()}')
                 return
-            news_url = f'https://tass.ru/moskva/{article[0]["id"]}'
+            news_url = f'https://moslenta.ru{article["attributes"]["link"]}'
             if news_db_col.find_one({'url': news_url}):
-                print(f'tass job ended at {datetime.datetime.now()}')
+                print(f'moslenta job ended at {datetime.datetime.now()}')
                 return
             article = Article(news_url, language='ru')
             try:
@@ -45,7 +42,7 @@ def tass_parser():
             except Exception:
                 continue
             data = {
-                'source': 'tass',
+                'source': 'moslenta',
                 'url': news_url,
                 'title': article.title,
                 'content': article.text,
@@ -57,4 +54,4 @@ def tass_parser():
 
 
 if __name__ == '__main__':
-    tass_parser()
+    moslenta_parser()
