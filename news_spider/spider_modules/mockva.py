@@ -49,7 +49,6 @@ def mockva_parser():
                 'content': article.text,
                 'datetime': news_dt
             }
-            print(data)
             news_db_col.insert_one(data)
             sleep(1)
         page += 1
