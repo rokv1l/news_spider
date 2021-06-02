@@ -36,22 +36,21 @@ def tass_parser():
             if news_db_col.find_one({'url': news_url}):
                 print(f'tass job ended at {datetime.datetime.now()}')
                 return
-            else:
-                article = Article(news_url, language='ru')
-                try:
-                    article.download()
-                    article.parse()
-                except Exception:
-                    continue
-                data = {
-                    'source': 'tass',
-                    'url': news_url,
-                    'title': article.title,
-                    'content': article.text,
-                    'datetime': news_dt
-                }
-                news_db_col.insert_one(data)
-                sleep(1)
+            article = Article(news_url, language='ru')
+            try:
+                article.download()
+                article.parse()
+            except Exception:
+                continue
+            data = {
+                'source': 'tass',
+                'url': news_url,
+                'title': article.title,
+                'content': article.text,
+                'datetime': news_dt
+            }
+            news_db_col.insert_one(data)
+            sleep(1)
         offset += limit
 
 

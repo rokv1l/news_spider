@@ -6,7 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 from newspaper import Article
 
-# from src.database import news_db_col
+from src.database import news_db_col
 
 
 def m24_parser():
@@ -29,9 +29,9 @@ def m24_parser():
         data = r.json()
         for article in data['materials']:
             news_url = f'https://m24.ru{article.get("url")}'
-            # if news_db_col.find_one({'url': news_url}):
-            #     print(f'm24 job ended at {datetime.datetime.now()}')
-            #     return
+            if news_db_col.find_one({'url': news_url}):
+                print(f'm24 job ended at {datetime.datetime.now()}')
+                return
             article = Article(news_url, language='ru')
             r = requests.get(news_url)
             if r.status_code != 200:
@@ -71,7 +71,7 @@ def m24_parser():
                 'content': article.text,
                 'datetime': news_dt
             }
-            # news_db_col.insert_one(data)
+            news_db_col.insert_one(data)
             sleep(1)
         page += 1
 
