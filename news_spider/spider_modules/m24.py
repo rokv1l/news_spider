@@ -25,7 +25,12 @@ def m24_parser():
         }
         r = requests.get(url, params=params, headers=headers)
         if r.status_code != 200:
-            print(f'm24 job ended at {datetime.datetime.now()}')
+            print(
+                f'm24 job error, request status code != 200\n'
+                f'url: {r.url}\n'
+                f'status code: {r.status_code}\n'
+                f'at {datetime.datetime.now()}'
+            )
             return
         data = r.json()
         for article in data['materials']:
@@ -36,7 +41,12 @@ def m24_parser():
             article = Article(news_url, language='ru')
             r = requests.get(news_url)
             if r.status_code != 200:
-                print(f'm24 job ended at {datetime.datetime.now()}')
+                print(
+                    f'm24 job error, request status code != 200\n'
+                    f'url: {r.url}\n'
+                    f'status code: {r.status_code}\n'
+                    f'at {datetime.datetime.now()}'
+                )
                 return
             soup = BeautifulSoup(r.text, 'lxml')
             dt_now = datetime.datetime.now()

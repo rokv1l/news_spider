@@ -15,7 +15,12 @@ def ria_parser():
     while True:
         r = requests.get('https://ria.ru/services/location_Moskva/more.html', params=params)
         if r.status_code != 200:
-            print(f'm24 job ended at {datetime.datetime.now()}')
+            print(
+                f'ria job error, request status code != 200\n'
+                f'url: {r.url}\n'
+                f'status code: {r.status_code}\n'
+                f'at {datetime.datetime.now()}'
+            )
             return
         soup = BeautifulSoup(r.text, 'lxml')
         news_list = soup.find_all('div', {'class': 'list-item'})
@@ -26,7 +31,12 @@ def ria_parser():
                 return
             r = requests.get(news_url)
             if r.status_code != 200:
-                print(f'm24 job ended at {datetime.datetime.now()}')
+                print(
+                    f'ria job error, request status code != 200\n'
+                    f'url: {r.url}\n'
+                    f'status code: {r.status_code}\n'
+                    f'at {datetime.datetime.now()}'
+                )
                 return
             soup = BeautifulSoup(r.text, 'lxml')
             news_dt_str = soup.find('div', {'class': 'article__info-date'}).find('a').text

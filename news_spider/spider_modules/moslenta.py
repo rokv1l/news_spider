@@ -20,7 +20,12 @@ def moslenta_parser():
         }
         r = requests.get(url, params=params)
         if r.status_code != 200:
-            print(f'moslenta job ended at {datetime.datetime.now()}')
+            print(
+                f'moslenta job error, request status code != 200\n'
+                f'url: {r.url}\n'
+                f'status code: {r.status_code}\n'
+                f'at {datetime.datetime.now()}'
+            )
             return
         data = r.json()
         if not data.get('data'):

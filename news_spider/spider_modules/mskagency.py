@@ -17,7 +17,12 @@ def mskagency_parser():
         params = {'page': page, 'rnd': 1}
         r = requests.get(url, params=params)
         if r.status_code != 200:
-            print(f'm24 job ended at {datetime.datetime.now()}')
+            print(
+                f'mskagency job error, request status code != 200\n'
+                f'url: {r.url}\n'
+                f'status code: {r.status_code}\n'
+                f'at {datetime.datetime.now()}'
+            )
             return
         soup = BeautifulSoup(r.text, 'lxml')
         news_list = soup.find('ul', {'class': 'NewsList'}).find_all('li')

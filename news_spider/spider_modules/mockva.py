@@ -15,7 +15,12 @@ def mockva_parser():
     while True:
         r = requests.get(f'https://mockva.ru/category/gorod/page/{page}')
         if r.status_code != 200:
-            print(f'm24 job ended at {datetime.datetime.now()}')
+            print(
+                f'icmos job error, request status code != 200\n'
+                f'mockva: {r.url}\n'
+                f'status code: {r.status_code}\n'
+                f'at {datetime.datetime.now()}'
+            )
             return
         soup = BeautifulSoup(r.text, 'lxml')
         news_list = soup.find_all('div', {'class': 'post-card__body'})

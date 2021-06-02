@@ -15,7 +15,12 @@ def riamo_parser():
     while True:
         r = requests.get(f'https://riamo.ru/ajax/news.xl', params=params)
         if r.status_code != 200:
-            print(f'm24 job ended at {datetime.datetime.now()}')
+            print(
+                f'riamo job error, request status code != 200\n'
+                f'url: {r.url}\n'
+                f'status code: {r.status_code}\n'
+                f'at {datetime.datetime.now()}'
+            )
             return
         if params == {'type': 'all'}:
             params['offset'] = 0
@@ -29,7 +34,12 @@ def riamo_parser():
                 return
             r = requests.get(news_url)
             if r.status_code != 200:
-                print(f'm24 job ended at {datetime.datetime.now()}')
+                print(
+                    f'riamo job error, request status code != 200\n'
+                    f'url: {r.url}\n'
+                    f'status code: {r.status_code}\n'
+                    f'at {datetime.datetime.now()}'
+                )
                 return
             soup = BeautifulSoup(r.text, 'lxml')
             news_dt_str = soup.find('time', {'class': 'heading--time'}).find('meta', {'itemprop': 'datePublished'}).get('content')

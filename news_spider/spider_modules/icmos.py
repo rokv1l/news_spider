@@ -15,7 +15,12 @@ def icmos_parser():
     while True:
         r = requests.get('https://icmos.ru/news', params={'page': page})
         if r.status_code != 200:
-            print(f'm24 job ended at {datetime.datetime.now()}')
+            print(
+                f'icmos job error, request status code != 200\n'
+                f'url: {r.url}\n'
+                f'status code: {r.status_code}\n'
+                f'at {datetime.datetime.now()}'
+            )
             return
         soup = BeautifulSoup(r.text, 'lxml')
         news_list = soup.find('div', {'class': 'multimedia_other'}).find_all('div', {'class': 'big'})
@@ -26,7 +31,12 @@ def icmos_parser():
                 return
             r = requests.get(news_url)
             if r.status_code != 200:
-                print(f'm24 job ended at {datetime.datetime.now()}')
+                print(
+                    f'icmos job error, request status code != 200\n'
+                    f'url: {r.url}\n'
+                    f'status code: {r.status_code}\n'
+                    f'at {datetime.datetime.now()}'
+                )
                 return
             soup = BeautifulSoup(r.text, 'lxml')
             news_dt_str = soup.find('div', {'class': 'path clearfix'}).find('div', {'class': 'right'}).text.replace(' ', '')
