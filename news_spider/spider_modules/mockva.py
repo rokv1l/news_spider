@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from newspaper import Article
 
+import config
 from src.database import news_db_col
 
 
@@ -29,7 +30,7 @@ def mockva_parser():
                 'second': 0,
                 'microsecond': 0,
             })
-            if news_dt < datetime.datetime.now() - datetime.timedelta(days=30):
+            if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
                 print(f'mockva job ended at {datetime.datetime.now()}')
                 return
             news_url = news.find('a').get('href')
@@ -50,7 +51,7 @@ def mockva_parser():
                 'datetime': news_dt
             }
             news_db_col.insert_one(data)
-            sleep(1)
+            sleep(config.request_delay)
         page += 1
 
 

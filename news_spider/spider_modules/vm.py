@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from newspaper import Article
 
+import config
 from src.database import news_db_col
 
 
@@ -43,7 +44,7 @@ def vm_parser():
                     second=0,
                     microsecond=0
                 )
-                if news_dt < dt_now - datetime.timedelta(days=30):
+                if news_dt < dt_now - datetime.timedelta(**config.tracked_time):
                     print(f'vm job ended at {datetime.datetime.now()}')
                     return
                 article = Article(news_url, language='ru')
@@ -64,7 +65,7 @@ def vm_parser():
                 }
                 print(data)
                 news_db_col.insert_one(data)
-                sleep(1)
+                sleep(config.request_delay)
         page += 1
 
 

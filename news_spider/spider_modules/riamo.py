@@ -5,6 +5,7 @@ import requests
 from bs4 import BeautifulSoup
 from newspaper import Article
 
+import config
 from src.database import news_db_col
 
 
@@ -33,7 +34,7 @@ def riamo_parser():
             soup = BeautifulSoup(r.text, 'lxml')
             news_dt_str = soup.find('time', {'class': 'heading--time'}).find('meta', {'itemprop': 'datePublished'}).get('content')
             news_dt = datetime.datetime.fromisoformat(news_dt_str.replace('+03', '') + ':00')
-            if news_dt < datetime.datetime.now() - datetime.timedelta(days=30):
+            if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
                 print(f'riamo job ended at {datetime.datetime.now()}')
                 return
             article = Article(news_url, language='ru')
@@ -41,7 +42,6 @@ def riamo_parser():
                 article.set_html(r.text)
                 article.parse()
             except Exception:
-                print(1)
                 continue
             data = {
                 'source': 'riamo',
@@ -52,7 +52,7 @@ def riamo_parser():
             }
             news_db_col.insert_one(data)
             params['last'] = int(news.get('data-flatr').replace('article', ''))
-            sleep(1)
+            sleep(config.request_delay)
         params['offset'] += 10
 
 
