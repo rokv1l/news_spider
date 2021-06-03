@@ -12,6 +12,15 @@ from src.sсhedule_mp import IntervalJob, Scheduler
 
 
 def main():
+    mskagency_parser()
+    tass_parser()
+    vm_parser()
+    m24_parser()
+    icmos_parser()
+    mockva_parser()
+    riamo_parser()
+    ria_parser()
+    moslenta_parser()
     scheduler = Scheduler()
     scheduler.add_job(IntervalJob('mskagency', mskagency_parser, delay=config.run_jobs_delay))
     scheduler.add_job(IntervalJob('tass', tass_parser, delay=config.run_jobs_delay))

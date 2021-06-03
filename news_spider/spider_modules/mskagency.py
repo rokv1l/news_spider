@@ -27,33 +27,33 @@ def mskagency_parser():
         soup = BeautifulSoup(r.text, 'lxml')
         news_list = soup.find('ul', {'class': 'NewsList'}).find_all('li')
         for news in news_list:
-            if news.get('class') == ['date']:
-                continue
-            news_date_str = news.get('data-datei')
-            news_time_str = news.find('div', {'class': 'time'}).text
-            news_dt = datetime.datetime.fromisoformat(f'{news_date_str[:4]}-{news_date_str[4:6]}-{news_date_str[6:]}T{news_time_str}:00')
-            if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
-                print(f'mskagency job ended at {datetime.datetime.now()}')
-                return
-            news_url = url + news.find('a').get('href')
-            if news_db_col.find_one({'url': news_url}):
-                print(f'mskagency job ended at {datetime.datetime.now()}')
-                return
-            article = Article(news_url, language='ru')
             try:
+                if news.get('class') == ['date']:
+                    continue
+                news_date_str = news.get('data-datei')
+                news_time_str = news.find('div', {'class': 'time'}).text
+                news_dt = datetime.datetime.fromisoformat(f'{news_date_str[:4]}-{news_date_str[4:6]}-{news_date_str[6:]}T{news_time_str}:00')
+                if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
+                    print(f'mskagency job ended at {datetime.datetime.now()}')
+                    return
+                news_url = url + news.find('a').get('href')
+                if news_db_col.find_one({'url': news_url}):
+                    print(f'mskagency job ended at {datetime.datetime.now()}')
+                    return
+                article = Article(news_url, language='ru')
                 article.download()
                 article.parse()
+                data = {
+                    'source': 'mskagency',
+                    'url': news_url,
+                    'title': article.title,
+                    'content': article.text,
+                    'datetime': news_dt
+                }
+                news_db_col.insert_one(data)
+                sleep(config.request_delay)
             except Exception:
                 continue
-            data = {
-                'source': 'mskagency',
-                'url': news_url,
-                'title': article.title,
-                'content': article.text,
-                'datetime': news_dt
-            }
-            news_db_col.insert_one(data)
-            sleep(config.request_delay)
         page += 1
 
 

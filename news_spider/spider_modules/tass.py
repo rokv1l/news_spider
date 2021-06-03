@@ -35,29 +35,29 @@ def tass_parser():
             # что то не так
             return
         for article in data.get('data').get('news'):
-            news_dt = datetime.datetime.fromtimestamp(article[0]['publishDate'])
-            if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
-                print(f'tass job ended at {datetime.datetime.now()}')
-                return
-            news_url = f'https://tass.ru/moskva/{article[0]["id"]}'
-            if news_db_col.find_one({'url': news_url}):
-                print(f'tass job ended at {datetime.datetime.now()}')
-                return
-            article = Article(news_url, language='ru')
             try:
+                news_dt = datetime.datetime.fromtimestamp(article[0]['publishDate'])
+                if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
+                    print(f'tass job ended at {datetime.datetime.now()}')
+                    return
+                news_url = f'https://tass.ru/moskva/{article[0]["id"]}'
+                if news_db_col.find_one({'url': news_url}):
+                    print(f'tass job ended at {datetime.datetime.now()}')
+                    return
+                article = Article(news_url, language='ru')
                 article.download()
                 article.parse()
+                data = {
+                    'source': 'tass',
+                    'url': news_url,
+                    'title': article.title,
+                    'content': article.text,
+                    'datetime': news_dt
+                }
+                news_db_col.insert_one(data)
+                sleep(config.request_delay)
             except Exception:
                 continue
-            data = {
-                'source': 'tass',
-                'url': news_url,
-                'title': article.title,
-                'content': article.text,
-                'datetime': news_dt
-            }
-            news_db_col.insert_one(data)
-            sleep(config.request_delay)
         offset += limit
 
 

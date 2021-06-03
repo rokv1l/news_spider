@@ -28,41 +28,41 @@ def riamo_parser():
         soup = BeautifulSoup(r.text, 'lxml')
         news_list = soup.find_all('div', {'class': 'card-horizontal'})
         for news in news_list:
-            news_url = 'https://riamo.ru' + news.find('a').get('href')
-            if news_db_col.find_one({'url': news_url}):
-                print(f'riamo job ended at {datetime.datetime.now()}')
-                return
-            r = requests.get(news_url)
-            if r.status_code != 200:
-                print(
-                    f'riamo job error, request status code != 200\n'
-                    f'url: {r.url}\n'
-                    f'status code: {r.status_code}\n'
-                    f'at {datetime.datetime.now()}'
-                )
-                return
-            soup = BeautifulSoup(r.text, 'lxml')
-            news_dt_str = soup.find('time', {'class': 'heading--time'}).find('meta', {'itemprop': 'datePublished'}).get('content')
-            news_dt = datetime.datetime.fromisoformat(news_dt_str.replace('+03', '') + ':00')
-            if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
-                print(f'riamo job ended at {datetime.datetime.now()}')
-                return
-            article = Article(news_url, language='ru')
             try:
+                news_url = 'https://riamo.ru' + news.find('a').get('href')
+                if news_db_col.find_one({'url': news_url}):
+                    print(f'riamo job ended at {datetime.datetime.now()}')
+                    return
+                r = requests.get(news_url)
+                if r.status_code != 200:
+                    print(
+                        f'riamo job error, request status code != 200\n'
+                        f'url: {r.url}\n'
+                        f'status code: {r.status_code}\n'
+                        f'at {datetime.datetime.now()}'
+                    )
+                    return
+                soup = BeautifulSoup(r.text, 'lxml')
+                news_dt_str = soup.find('time', {'class': 'heading--time'}).find('meta', {'itemprop': 'datePublished'}).get('content')
+                news_dt = datetime.datetime.fromisoformat(news_dt_str.replace('+03', '') + ':00')
+                if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
+                    print(f'riamo job ended at {datetime.datetime.now()}')
+                    return
+                article = Article(news_url, language='ru')
                 article.set_html(r.text)
                 article.parse()
+                data = {
+                    'source': 'riamo',
+                    'url': news_url,
+                    'title': article.title,
+                    'content': article.text,
+                    'datetime': news_dt
+                }
+                news_db_col.insert_one(data)
+                params['last'] = int(news.get('data-flatr').replace('article', ''))
+                sleep(config.request_delay)
             except Exception:
                 continue
-            data = {
-                'source': 'riamo',
-                'url': news_url,
-                'title': article.title,
-                'content': article.text,
-                'datetime': news_dt
-            }
-            news_db_col.insert_one(data)
-            params['last'] = int(news.get('data-flatr').replace('article', ''))
-            sleep(config.request_delay)
         params['offset'] += 10
 
 

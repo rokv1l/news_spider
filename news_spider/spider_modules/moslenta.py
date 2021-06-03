@@ -32,29 +32,29 @@ def moslenta_parser():
             # что то не так
             return
         for article in data.get('data'):
-            news_dt = datetime.datetime.fromisoformat(article['attributes']['published_at'][:-5])
-            if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
-                print(f'moslenta job ended at {datetime.datetime.now()}')
-                return
-            news_url = f'https://moslenta.ru{article["attributes"]["link"]}'
-            if news_db_col.find_one({'url': news_url}):
-                print(f'moslenta job ended at {datetime.datetime.now()}')
-                return
-            article = Article(news_url, language='ru')
             try:
+                news_dt = datetime.datetime.fromisoformat(article['attributes']['published_at'][:-5])
+                if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
+                    print(f'moslenta job ended at {datetime.datetime.now()}')
+                    return
+                news_url = f'https://moslenta.ru{article["attributes"]["link"]}'
+                if news_db_col.find_one({'url': news_url}):
+                    print(f'moslenta job ended at {datetime.datetime.now()}')
+                    return
+                article = Article(news_url, language='ru')
                 article.download()
                 article.parse()
+                data = {
+                    'source': 'moslenta',
+                    'url': news_url,
+                    'title': article.title,
+                    'content': article.text,
+                    'datetime': news_dt
+                }
+                news_db_col.insert_one(data)
+                sleep(config.request_delay)
             except Exception:
                 continue
-            data = {
-                'source': 'moslenta',
-                'url': news_url,
-                'title': article.title,
-                'content': article.text,
-                'datetime': news_dt
-            }
-            news_db_col.insert_one(data)
-            sleep(config.request_delay)
         offset += limit
 
 

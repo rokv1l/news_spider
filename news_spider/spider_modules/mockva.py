@@ -25,38 +25,38 @@ def mockva_parser():
         soup = BeautifulSoup(r.text, 'lxml')
         news_list = soup.find_all('div', {'class': 'post-card__body'})
         for news in news_list:
-            news_dt_str = news.find('time').text
-            news_dt = datetime.datetime(**{
-                'year': int(news_dt_str[6:10]),
-                'month': int(news_dt_str[3:5]),
-                'day': int(news_dt_str[:2]),
-                'hour': int(news_dt_str[-5:-3]),
-                'minute': int(news_dt_str[-2:]),
-                'second': 0,
-                'microsecond': 0,
-            })
-            if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
-                print(f'mockva job ended at {datetime.datetime.now()}')
-                return
-            news_url = news.find('a').get('href')
-            if news_db_col.find_one({'url': news_url}):
-                print(f'mockva job ended at {datetime.datetime.now()}')
-                return
-            article = Article(news_url, language='ru')
             try:
+                news_dt_str = news.find('time').text
+                news_dt = datetime.datetime(**{
+                    'year': int(news_dt_str[6:10]),
+                    'month': int(news_dt_str[3:5]),
+                    'day': int(news_dt_str[:2]),
+                    'hour': int(news_dt_str[-5:-3]),
+                    'minute': int(news_dt_str[-2:]),
+                    'second': 0,
+                    'microsecond': 0,
+                })
+                if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
+                    print(f'mockva job ended at {datetime.datetime.now()}')
+                    return
+                news_url = news.find('a').get('href')
+                if news_db_col.find_one({'url': news_url}):
+                    print(f'mockva job ended at {datetime.datetime.now()}')
+                    return
+                article = Article(news_url, language='ru')
                 article.download()
                 article.parse()
+                data = {
+                    'source': 'mockva',
+                    'url': news_url,
+                    'title': article.title,
+                    'content': article.text,
+                    'datetime': news_dt
+                }
+                news_db_col.insert_one(data)
+                sleep(config.request_delay)
             except Exception:
                 continue
-            data = {
-                'source': 'mockva',
-                'url': news_url,
-                'title': article.title,
-                'content': article.text,
-                'datetime': news_dt
-            }
-            news_db_col.insert_one(data)
-            sleep(config.request_delay)
         page += 1
 
 
