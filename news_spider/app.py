@@ -1,3 +1,5 @@
+from multiprocessing import Process, freeze_support
+
 import config
 from spider_modules.mskagency import mskagency_parser
 from spider_modules.tass import tass_parser
@@ -10,17 +12,14 @@ from spider_modules.ria import ria_parser
 from spider_modules.moslenta import moslenta_parser
 from src.sсhedule_mp import IntervalJob, Scheduler
 
+freeze_support()
+
 
 def main():
-    mskagency_parser()
-    tass_parser()
-    vm_parser()
-    m24_parser()
-    icmos_parser()
-    mockva_parser()
-    riamo_parser()
-    ria_parser()
-    moslenta_parser()
+    parsers = [mskagency_parser, tass_parser, vm_parser, m24_parser, icmos_parser, mockva_parser, riamo_parser, ria_parser, moslenta_parser]
+    for parser in parsers:
+        process = Process(target=parser)
+        process.start()
     scheduler = Scheduler()
     scheduler.add_job(IntervalJob('mskagency', mskagency_parser, delay=config.run_jobs_delay))
     scheduler.add_job(IntervalJob('tass', tass_parser, delay=config.run_jobs_delay))
