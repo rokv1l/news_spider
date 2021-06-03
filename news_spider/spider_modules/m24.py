@@ -6,6 +6,7 @@ import requests
 from bs4 import BeautifulSoup
 from newspaper import Article
 
+
 import config
 from src.database import news_db_col
 
@@ -54,17 +55,22 @@ def m24_parser():
             time_data = {
                 'year': dt_now.year,
                 'second': 0,
-                'microsecond': 0,
-                'hour': int(str_time[-5:-3]),
-                'minute': int(str_time[-2:]),
+                'microsecond': 0
             }
-            if re.findall(r'\d\d:\d\d', str_time):
+            if re.findall(r'^\d\d:\d\d$', str_time):
+                time_data['hour'] = int(str_time[:2])
+                time_data['minute'] = int(str_time[3:5])
                 time_data['month'] = dt_now.month
                 time_data['day'] = dt_now.day
-            elif re.findall(r'\d{1,2}\s\w+\s\d\d:\d\d', str_time):
-                month = ['января', 'февраля', 'марта', "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"]
+            elif re.findall(r'^\d\d\s[А-Яа-я]+,\s\d\d:\d\d$', str_time):
+                month = ['января', 'февраля', 'марта', "апреля", "мая", "июня", "июля", "августа", "сентября",
+                         "октября", "ноября", "декабря"]
+                time_data['hour'] = int(str_time[-5:-3])
+                time_data['minute'] = int(str_time[-2:])
                 time_data['month'] = month.index(str_time[3:-7]) + 1
                 time_data['day'] = int(str_time[:2])
+            else:
+                continue
 
             news_dt = datetime.datetime(**time_data)
             if news_dt < dt_now - datetime.timedelta(**config.tracked_time):

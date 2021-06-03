@@ -62,7 +62,7 @@ def vm_parser():
                 article.parse()
             except Exception:
                 continue
-            if article.publish_date < datetime.datetime.now() - datetime.timedelta(days=30):
+            if news_dt < datetime.datetime.now() - datetime.timedelta(days=30):
                 print(f'vm job ended at {datetime.datetime.now()}')
                 return
             data = {
@@ -72,7 +72,6 @@ def vm_parser():
                 'content': article.text,
                 'datetime': news_dt
             }
-            print(data)
             news_db_col.insert_one(data)
             sleep(config.request_delay)
         page += 1

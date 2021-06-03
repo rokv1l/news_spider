@@ -39,14 +39,14 @@ def icmos_parser():
                 )
                 return
             soup = BeautifulSoup(r.text, 'lxml')
-            news_dt_str = soup.find('div', {'class': 'path clearfix'}).find('div', {'class': 'right'}).text.replace(' ', '')
+            news_dt_str = soup.find('div', {'class': 'news-title'}).find('span').text
             month = ['января', 'февраля', 'марта', "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"]
             news_dt = datetime.datetime(**{
-                'year': int(news_dt_str[7:11]),
+                'year': int(news_dt_str[-4:]),
                 'month': month.index(news_dt_str[3:7])+1,
-                'day': int(news_dt_str[1:3]),
-                'hour': int(news_dt_str[-6:-4]),
-                'minute': int(news_dt_str[-2:]),
+                'day': int(news_dt_str[:2]),
+                'hour': 0,
+                'minute': 0,
                 'second': 0,
                 'microsecond': 0,
             })

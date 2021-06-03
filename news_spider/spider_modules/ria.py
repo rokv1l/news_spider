@@ -14,6 +14,7 @@ def ria_parser():
     params = {}
     while True:
         r = requests.get('https://ria.ru/services/location_Moskva/more.html', params=params)
+        print(r.url)
         if r.status_code != 200:
             print(
                 f'ria job error, request status code != 200\n'
@@ -65,10 +66,14 @@ def ria_parser():
                 'content': article.text,
                 'datetime': news_dt
             }
-            print(data)
             news_db_col.insert_one(data)
             params['id'] = soup.find('meta', {'name': 'relap-entity-id'}).get('content')
-            params['date'] = f'{news_dt.year}{news_dt.month}{news_dt.day}T{news_dt.hour}{news_dt.minute}{news_dt.second}'
+            params['date'] = f'{news_dt.year}' \
+                             f'{news_dt.month if news_dt.month > 9 else f"0{news_dt.month}"}' \
+                             f'{news_dt.day if news_dt.day > 9 else f"0{news_dt.day}"}T' \
+                             f'{news_dt.hour if news_dt.hour > 9 else f"0{news_dt.hour}"}' \
+                             f'{news_dt.minute if news_dt.minute > 9 else f"0{news_dt.minute}"}' \
+                             f'00'
             sleep(config.request_delay)
 
 
