@@ -64,7 +64,7 @@ def ria_parser():
                     'content': article.text,
                     'datetime': news_dt.isoformat()
                 }
-                logging.info(news_url)
+                print(news_url)
                 news_db_col.insert_one(data)
                 params['id'] = soup.find('meta', {'name': 'relap-entity-id'}).get('content')
                 params['date'] = f'{news_dt.year}' \

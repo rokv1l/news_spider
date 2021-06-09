@@ -65,7 +65,7 @@ def icmos_parser():
                     'content': article.text,
                     'datetime': news_dt.isoformat()
                 }
-                logging.info(news_url)
+                print(news_url)
                 news_db_col.insert_one(data)
                 sleep(config.request_delay)
             except Exception:
