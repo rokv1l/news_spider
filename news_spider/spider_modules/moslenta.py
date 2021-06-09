@@ -49,7 +49,7 @@ def moslenta_parser():
                     'url': news_url,
                     'title': article.title,
                     'content': article.text,
-                    'datetime': news_dt
+                    'datetime': news_dt.isoformat()
                 }
                 news_db_col.insert_one(data)
                 sleep(config.request_delay)

@@ -3,3 +3,5 @@ requests
 beautifulsoup4
 pymongo
 newspaper3k==0.2.8
+flask
+flask_restful

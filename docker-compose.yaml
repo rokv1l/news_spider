@@ -11,6 +11,8 @@ services:
       dockerfile: news_spider/Dockerfile
     image: news_spider
     container_name: news_spider
+    env_file:
+      - .env
     restart: unless-stopped
     tty: True
     working_dir: /news_spider
@@ -22,3 +24,17 @@ services:
     tty: True
     volumes:
       - spider_news_volume:/data/spider_news_volume
+
+  news_spider_api:
+    build:
+      context: .
+      dockerfile: api/Dockerfile
+    image: news_spider_api
+    container_name: news_spider_api
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:5001:5001"
+    restart: unless-stopped
+    tty: True
+    working_dir: /api
