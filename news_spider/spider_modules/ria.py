@@ -1,4 +1,5 @@
 import datetime
+import logging
 from time import sleep
 
 import requests
@@ -14,7 +15,6 @@ def ria_parser():
     params = {}
     while True:
         r = requests.get('https://ria.ru/services/location_Moskva/more.html', params=params)
-        print(r.url)
         if r.status_code != 200:
             print(
                 f'ria job error, request status code != 200\n'
@@ -64,6 +64,7 @@ def ria_parser():
                     'content': article.text,
                     'datetime': news_dt.isoformat()
                 }
+                logging.info(news_url)
                 news_db_col.insert_one(data)
                 params['id'] = soup.find('meta', {'name': 'relap-entity-id'}).get('content')
                 params['date'] = f'{news_dt.year}' \
