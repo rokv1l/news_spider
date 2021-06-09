@@ -34,7 +34,7 @@ services:
     env_file:
       - .env
     ports:
-      - "127.0.0.1:5001:5001"
+      - "0.0.0.0:5001:5001"
     restart: unless-stopped
     tty: True
     working_dir: /api
