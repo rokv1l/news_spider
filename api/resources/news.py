@@ -11,8 +11,8 @@ from src.database import news_db_col
 class News(Resource):
     def get(self):
         token = request.headers.get("authorization", "").replace("Bearer ", "")
-        # if token != config.token:
-        #     return {'error': 'Authorization failed'}, 401
+        if token != config.token:
+            return {'error': 'Authorization failed'}, 401
         parser = reqparse.RequestParser()
         parser.add_argument('source', required=False)
         args = parser.parse_args()
