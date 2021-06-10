@@ -10,13 +10,14 @@ from spider_modules.mockva import mockva_parser
 from spider_modules.riamo import riamo_parser
 from spider_modules.ria import ria_parser
 from spider_modules.moslenta import moslenta_parser
+from spider_modules.kp import kp_parser
 from src.sсhedule_mp import IntervalJob, Scheduler
 
 freeze_support()
 
 
 def main():
-    parsers = [mskagency_parser, tass_parser, vm_parser, m24_parser, icmos_parser, mockva_parser, riamo_parser, ria_parser, moslenta_parser]
+    parsers = [mskagency_parser, tass_parser, vm_parser, m24_parser, icmos_parser, mockva_parser, riamo_parser, ria_parser, moslenta_parser, kp_parser]
     for parser in parsers:
         process = Process(target=parser)
         process.start()
