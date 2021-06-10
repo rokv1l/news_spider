@@ -12,7 +12,7 @@ import config
 
 def icmos_parser():
     print(f'icmos job started at {datetime.datetime.now()}')
-    page = 88
+    page = 1
     while True:
         r = requests.get('https://icmos.ru/news', params={'page': page})
         if r.status_code != 200:
