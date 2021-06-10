@@ -59,6 +59,7 @@ def m24_parser():
                     'second': 0,
                     'microsecond': 0
                 }
+                print(str_time)
                 if re.findall(r'^\d\d:\d\d$', str_time):
                     time_data['hour'] = int(str_time[:2])
                     time_data['minute'] = int(str_time[3:5])
@@ -90,7 +91,8 @@ def m24_parser():
                 print(news_url)
                 news_db_col.insert_one(data)
                 sleep(config.request_delay)
-            except Exception:
+            except Exception as e:
+                print(f'Warning: error when processing news - {e}')
                 continue
         page += 1
 

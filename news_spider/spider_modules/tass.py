@@ -58,7 +58,8 @@ def tass_parser():
                 print(news_url)
                 news_db_col.insert_one(data)
                 sleep(config.request_delay)
-            except Exception:
+            except Exception as e:
+                print(f'Warning: error when processing news - {e}')
                 continue
         offset += limit
 

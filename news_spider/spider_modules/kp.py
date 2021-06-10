@@ -37,15 +37,6 @@ def kp_parser():
                 if news_db_col.find_one({'url': news_url}):
                     print(f'kp job ended at {datetime.datetime.now()}')
                     return
-                r = requests.get(news_url)
-                if r.status_code != 200:
-                    print(
-                        f'kp job error, request status code != 200\n'
-                        f'url: {r.url}\n'
-                        f'status code: {r.status_code}\n'
-                        f'at {datetime.datetime.now()}'
-                    )
-                    return
                 news_dt = datetime.datetime.fromisoformat(news['meta'][0]['value'])
                 if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
                     print(f'kp job ended at {datetime.datetime.now()}')
@@ -63,7 +54,8 @@ def kp_parser():
                 print(news_url)
                 news_db_col.insert_one(data)
                 sleep(config.request_delay)
-            except Exception:
+            except Exception as e:
+                print(f'Warning: error when processing news - {e}')
                 continue
         page += 1
 

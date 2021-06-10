@@ -7,12 +7,12 @@ from bs4 import BeautifulSoup
 from newspaper import Article
 
 import config
-from src.database import news_db_col
+# from src.database import news_db_col
 
 
 def icmos_parser():
     print(f'icmos job started at {datetime.datetime.now()}')
-    page = 1
+    page = 88
     while True:
         r = requests.get('https://icmos.ru/news', params={'page': page})
         if r.status_code != 200:
@@ -28,9 +28,9 @@ def icmos_parser():
         for news in news_list:
             try:
                 news_url = 'https://icmos.ru' + news.find('a').get('href')
-                if news_db_col.find_one({'url': news_url}):
-                    print(f'icmos job ended at {datetime.datetime.now()}')
-                    return
+                # if news_db_col.find_one({'url': news_url}):
+                #     print(f'icmos job ended at {datetime.datetime.now()}')
+                #     return
                 r = requests.get(news_url)
                 if r.status_code != 200:
                     print(
@@ -66,9 +66,11 @@ def icmos_parser():
                     'datetime': news_dt.isoformat()
                 }
                 print(news_url)
-                news_db_col.insert_one(data)
+                print(news_dt.isoformat())
+                # news_db_col.insert_one(data)
                 sleep(config.request_delay)
-            except Exception:
+            except Exception as e:
+                print(f'Warning: Error in job - {e}')
                 continue
         page += 1
 

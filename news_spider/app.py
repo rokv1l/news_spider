@@ -11,13 +11,18 @@ from spider_modules.riamo import riamo_parser
 from spider_modules.ria import ria_parser
 from spider_modules.moslenta import moslenta_parser
 from spider_modules.kp import kp_parser
+from spider_modules.echo import echo_parser
+from spider_modules.rbc import rbc_parser
 from src.sсhedule_mp import IntervalJob, Scheduler
 
 freeze_support()
 
 
 def main():
-    parsers = [mskagency_parser, tass_parser, vm_parser, m24_parser, icmos_parser, mockva_parser, riamo_parser, ria_parser, moslenta_parser, kp_parser]
+    parsers = [
+        mskagency_parser, tass_parser, vm_parser, m24_parser, icmos_parser, mockva_parser, riamo_parser, ria_parser,
+        moslenta_parser, kp_parser, echo_parser, rbc_parser
+    ]
     for parser in parsers:
         process = Process(target=parser)
         process.start()
@@ -31,6 +36,9 @@ def main():
     scheduler.add_job(IntervalJob('riamo', riamo_parser, delay=config.run_jobs_delay))
     scheduler.add_job(IntervalJob('ria', ria_parser, delay=config.run_jobs_delay))
     scheduler.add_job(IntervalJob('moslenta', moslenta_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('kp', kp_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('echo', echo_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('rbc', rbc_parser, delay=config.run_jobs_delay))
     scheduler.run_pending()
 
 

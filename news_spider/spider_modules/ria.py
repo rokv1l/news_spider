@@ -74,7 +74,8 @@ def ria_parser():
                                  f'{news_dt.minute if news_dt.minute > 9 else f"0{news_dt.minute}"}' \
                                  f'00'
                 sleep(config.request_delay)
-            except Exception:
+            except Exception as e:
+                print(f'Warning: error when processing news - {e}')
                 continue
 
 

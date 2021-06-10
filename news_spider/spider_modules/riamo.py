@@ -63,7 +63,8 @@ def riamo_parser():
                 news_db_col.insert_one(data)
                 params['last'] = int(news.get('data-flatr').replace('article', ''))
                 sleep(config.request_delay)
-            except Exception:
+            except Exception as e:
+                print(f'Warning: error when processing news - {e}')
                 continue
         params['offset'] += 10
 

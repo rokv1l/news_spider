@@ -10,45 +10,45 @@ import config
 from src.database import news_db_col
 
 
-def mockva_parser():
-    print(f'mockva job started at {datetime.datetime.now()}')
-    page = 1
+def echo_parser():
+    print(f'echo job started at {datetime.datetime.now()}')
+    search_dt = datetime.datetime.now().date()
     while True:
-        r = requests.get(f'https://mockva.ru/category/gorod/page/{page}')
+        r = requests.get(f'https://echo.msk.ru/news/{search_dt.year}/{search_dt.month}/{search_dt.day}/')
         if r.status_code != 200:
             print(
-                f'icmos job error, request status code != 200\n'
-                f'mockva: {r.url}\n'
+                f'echo job error, request status code != 200\n'
+                f'url: {r.url}\n'
                 f'status code: {r.status_code}\n'
                 f'at {datetime.datetime.now()}'
             )
             return
         soup = BeautifulSoup(r.text, 'lxml')
-        news_list = soup.find_all('div', {'class': 'post-card__body'})
+        news_list = soup.find('div', {'class': 'newslist'}).find_all('div', {'class': 'newsblock'})
         for news in news_list:
             try:
-                news_dt_str = news.find('time').text
+                news_url = 'https://echo.msk.ru' + news.find('a').get('href')
+                if news_db_col.find_one({'url': news_url}):
+                    print(f'echo job ended at {datetime.datetime.now()}')
+                    return
+                news_time_str = news.find('span', {'class': 'datetime'}).text
                 news_dt = datetime.datetime(**{
-                    'year': int(news_dt_str[6:10]),
-                    'month': int(news_dt_str[3:5]),
-                    'day': int(news_dt_str[:2]),
-                    'hour': int(news_dt_str[-5:-3]),
-                    'minute': int(news_dt_str[-2:]),
+                    'year': search_dt.year,
+                    'month': search_dt.month,
+                    'day': search_dt.day,
+                    'hour': int(news_time_str[:2]),
+                    'minute': int(news_time_str[-2:]),
                     'second': 0,
                     'microsecond': 0,
                 })
                 if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
-                    print(f'mockva job ended at {datetime.datetime.now()}')
-                    return
-                news_url = news.find('a').get('href')
-                if news_db_col.find_one({'url': news_url}):
-                    print(f'mockva job ended at {datetime.datetime.now()}')
+                    print(f'echo job ended at {datetime.datetime.now()}')
                     return
                 article = Article(news_url, language='ru')
                 article.download()
                 article.parse()
                 data = {
-                    'source': 'mockva',
+                    'source': 'echo',
                     'url': news_url,
                     'title': article.title,
                     'content': article.text,
@@ -58,10 +58,10 @@ def mockva_parser():
                 news_db_col.insert_one(data)
                 sleep(config.request_delay)
             except Exception as e:
-                print(f'Warning: error when processing news - {e}')
+                print(f'Warning: Error in job - {e}')
                 continue
-        page += 1
+        search_dt = search_dt - datetime.timedelta(days=1)
 
 
 if __name__ == '__main__':
-    mockva_parser()
+    echo_parser()
