@@ -13,6 +13,7 @@ from spider_modules.moslenta import moslenta_parser
 from spider_modules.kp import kp_parser
 from spider_modules.echo import echo_parser
 from spider_modules.rbc import rbc_parser
+from spider_modules.rt import rt_parser
 from src.sсhedule_mp import IntervalJob, Scheduler
 
 freeze_support()
@@ -39,6 +40,7 @@ def main():
     scheduler.add_job(IntervalJob('kp', kp_parser, delay=config.run_jobs_delay))
     scheduler.add_job(IntervalJob('echo', echo_parser, delay=config.run_jobs_delay))
     scheduler.add_job(IntervalJob('rbc', rbc_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('rt', rt_parser, delay=config.run_jobs_delay))
     scheduler.run_pending()
 
 

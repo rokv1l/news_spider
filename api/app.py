@@ -1,13 +1,13 @@
 from flask import Flask
 from flask_restful import Api
 
-from resources.news import GetNews
+from resources.news import News
 
 
 app = Flask(__name__)
 api = Api(app)
 
-api.add_resource(GetNews, '/get_news')
+api.add_resource(News, '/get_news')
 
 
 if __name__ == '__main__':

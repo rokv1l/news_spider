@@ -1,5 +1,4 @@
 import datetime
-import json
 import re
 from time import sleep
 
