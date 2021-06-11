@@ -1,5 +1,6 @@
 import datetime
 import logging
+import traceback
 from time import sleep
 
 import requests
@@ -73,10 +74,11 @@ def ria_parser():
                                  f'{news_dt.hour if news_dt.hour > 9 else f"0{news_dt.hour}"}' \
                                  f'{news_dt.minute if news_dt.minute > 9 else f"0{news_dt.minute}"}' \
                                  f'00'
-                sleep(config.request_delay)
             except Exception as e:
-                print(f'Warning: error when processing news - {e}')
+                print(f'Warning: Error in job')
+                traceback.print_exc()
                 continue
+            sleep(config.request_delay)
 
 
 if __name__ == '__main__':

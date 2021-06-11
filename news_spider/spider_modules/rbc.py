@@ -1,5 +1,6 @@
 import datetime
 import re
+import traceback
 from time import sleep
 
 import requests
@@ -74,10 +75,11 @@ def rbc_parser():
                 }
                 print(news_url)
                 news_db_col.insert_one(data)
-                sleep(config.request_delay)
             except Exception as e:
-                print(f'Warning: error when processing news - {e}')
+                print(f'Warning: Error in job')
+                traceback.print_exc()
                 continue
+            sleep(config.request_delay)
         offset += limit
 
 

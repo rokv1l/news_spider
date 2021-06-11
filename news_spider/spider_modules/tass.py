@@ -1,5 +1,7 @@
 import datetime
 import logging
+import json
+import traceback
 from time import sleep
 
 import requests
@@ -41,7 +43,7 @@ def tass_parser():
                 if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
                     print(f'tass job ended at {datetime.datetime.now()}')
                     return
-                news_url = f'https://tass.ru/moskva/{article[0]["id"]}'
+                news_url = f'https://tass.ru/{article[0]["slug"]}/{article[0]["id"]}'
                 if news_db_col.find_one({'url': news_url}):
                     print(f'tass job ended at {datetime.datetime.now()}')
                     return
@@ -57,10 +59,11 @@ def tass_parser():
                 }
                 print(news_url)
                 news_db_col.insert_one(data)
-                sleep(config.request_delay)
             except Exception as e:
-                print(f'Warning: error when processing news - {e}')
+                print(f'Warning: Error in job')
+                traceback.print_exc()
                 continue
+            sleep(config.request_delay)
         offset += limit
 
 
