@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from newspaper import Article
 
 import config
-# from src.database import news_db_col
+from src.database import news_db_col
 
 
 def icmos_parser():
@@ -29,9 +29,9 @@ def icmos_parser():
         for news in news_list:
             try:
                 news_url = 'https://icmos.ru' + news.find('a').get('href')
-                # if news_db_col.find_one({'url': news_url}):
-                #     print(f'icmos job ended at {datetime.datetime.now()}')
-                #     return
+                if news_db_col.find_one({'url': news_url}):
+                    print(f'icmos job ended at {datetime.datetime.now()}')
+                    return
                 r = requests.get(news_url)
                 if r.status_code != 200:
                     print(
@@ -46,7 +46,7 @@ def icmos_parser():
                 month = ['января', 'февраля', 'марта', "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"]
                 news_dt = datetime.datetime(**{
                     'year': int(news_dt_str[-4:]),
-                    'month': month.index(news_dt_str[3:7])+1,
+                    'month': month.index(news_dt_str[3:-5])+1,
                     'day': int(news_dt_str[:2]),
                     'hour': 0,
                     'minute': 0,
@@ -67,8 +67,7 @@ def icmos_parser():
                     'datetime': news_dt.isoformat()
                 }
                 print(news_url)
-                print(news_dt.isoformat())
-                # news_db_col.insert_one(data)
+                news_db_col.insert_one(data)
             except Exception as e:
                 print(f'Warning: Error in job')
                 traceback.print_exc()
