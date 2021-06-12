@@ -1,20 +1,7 @@
 from multiprocessing import Process, freeze_support
 
 import config
-from spider_modules.mskagency import mskagency_parser
-from spider_modules.tass import tass_parser
-from spider_modules.vm import vm_parser
-from spider_modules.m24 import m24_parser
-from spider_modules.icmos import icmos_parser
-from spider_modules.mockva import mockva_parser
-from spider_modules.riamo import riamo_parser
-from spider_modules.ria import ria_parser
-from spider_modules.moslenta import moslenta_parser
-from spider_modules.kp import kp_parser
-from spider_modules.echo import echo_parser
-from spider_modules.rbc import rbc_parser
-from spider_modules.rt import rt_parser
-from spider_modules.lenta import lenta_parser
+import spider_modules
 from src.sсhedule_mp import IntervalJob, Scheduler
 
 freeze_support()
@@ -22,27 +9,30 @@ freeze_support()
 
 def main():
     parsers = [
-        mskagency_parser, tass_parser, vm_parser, m24_parser, icmos_parser, mockva_parser, riamo_parser, ria_parser,
-        moslenta_parser, kp_parser, echo_parser, rbc_parser, lenta_parser
+        spider_modules.mskagency.mskagency_parser, spider_modules.tass.tass_parser, spider_modules.vm.vm_parser,
+        spider_modules.m24.m24_parser, spider_modules.icmos.icmos_parser, spider_modules.mockva.mockva_parser,
+        spider_modules.riamo.riamo_parser, spider_modules.ria.ria_parser, spider_modules.moslenta.moslenta_parser,
+        spider_modules.kp.kp_parser, spider_modules.echo.echo_parser, spider_modules.rbc.rbc_parser,
+        spider_modules.rt.rt_parser, spider_modules.lenta.lenta_parser
     ]
     for parser in parsers:
         process = Process(target=parser)
         process.start()
     scheduler = Scheduler()
-    scheduler.add_job(IntervalJob('mskagency', mskagency_parser, delay=config.run_jobs_delay))
-    scheduler.add_job(IntervalJob('tass', tass_parser, delay=config.run_jobs_delay))
-    scheduler.add_job(IntervalJob('vm', vm_parser, delay=config.run_jobs_delay))
-    scheduler.add_job(IntervalJob('m24', m24_parser, delay=config.run_jobs_delay))
-    scheduler.add_job(IntervalJob('icmos', icmos_parser, delay=config.run_jobs_delay))
-    scheduler.add_job(IntervalJob('mockva', mockva_parser, delay=config.run_jobs_delay))
-    scheduler.add_job(IntervalJob('riamo', riamo_parser, delay=config.run_jobs_delay))
-    scheduler.add_job(IntervalJob('ria', ria_parser, delay=config.run_jobs_delay))
-    scheduler.add_job(IntervalJob('moslenta', moslenta_parser, delay=config.run_jobs_delay))
-    scheduler.add_job(IntervalJob('kp', kp_parser, delay=config.run_jobs_delay))
-    scheduler.add_job(IntervalJob('echo', echo_parser, delay=config.run_jobs_delay))
-    scheduler.add_job(IntervalJob('rbc', rbc_parser, delay=config.run_jobs_delay))
-    scheduler.add_job(IntervalJob('rt', rt_parser, delay=config.run_jobs_delay))
-    scheduler.add_job(IntervalJob('lenta', lenta_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('mskagency', spider_modules.mskagency.mskagency_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('tass', spider_modules.tass.tass_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('vm', spider_modules.vm.vm_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('m24', spider_modules.m24.m24_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('icmos', spider_modules.icmos.icmos_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('mockva', spider_modules.mockva.mockva_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('riamo', spider_modules.riamo.riamo_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('ria', spider_modules.ria.ria_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('moslenta', spider_modules.moslenta.moslenta_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('kp', spider_modules.kp.kp_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('echo', spider_modules.echo.echo_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('rbc', spider_modules.rbc.rbc_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('rt', spider_modules.rt.rt_parser, delay=config.run_jobs_delay))
+    scheduler.add_job(IntervalJob('lenta', spider_modules.lenta.lenta_parser, delay=config.run_jobs_delay))
     scheduler.run_pending()
 
 
