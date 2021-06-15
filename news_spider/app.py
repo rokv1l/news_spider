@@ -13,7 +13,8 @@ def main():
         spider_modules.m24.m24_parser, spider_modules.icmos.icmos_parser, spider_modules.mockva.mockva_parser,
         spider_modules.riamo.riamo_parser, spider_modules.ria.ria_parser, spider_modules.moslenta.moslenta_parser,
         spider_modules.kp.kp_parser, spider_modules.echo.echo_parser, spider_modules.rbc.rbc_parser,
-        spider_modules.rt.rt_parser, spider_modules.lenta.lenta_parser
+        spider_modules.rt.rt_parser, spider_modules.lenta.lenta_parser, spider_modules.aif.aif_parser,
+        spider_modules.mk.mk_parser, 
     ]
     scheduler = Scheduler()
     for parser in parsers:
