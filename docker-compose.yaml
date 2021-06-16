@@ -1,8 +1,4 @@
 version: '3'
-
-volumes:
-  spider_news_volume:
-
 services:
 
   news_spider:
@@ -20,10 +16,10 @@ services:
   spider_news_mongo:
     image: mongo
     container_name: spider_news_mongo
+    volumes:
+      - mongodb:/data/db
     restart: unless-stopped
     tty: True
-    volumes:
-      - spider_news_volume:/data/spider_news_volume
 
   news_spider_api:
     build:
@@ -38,3 +34,6 @@ services:
     restart: unless-stopped
     tty: True
     working_dir: /api
+
+volumes:
+  mongodb:
