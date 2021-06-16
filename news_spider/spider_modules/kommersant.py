@@ -51,7 +51,10 @@ def kommersant_parser():
                     )
                     return
                 soup = BeautifulSoup(r.text, 'lxml')
-                news_dt_str = soup.find('meta', {'itemprop': 'datePublished'}).get('content')
+                news_dt_tag = soup.find('meta', {'itemprop': 'datePublished'})
+                if not news_dt_tag:
+                    continue
+                news_dt_str = news_dt_tag.get('content')
                 news_dt = datetime.datetime.fromisoformat(news_dt_str[:-6])
                 if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
                     print(f'kommersant job ended at {datetime.datetime.now()}')
