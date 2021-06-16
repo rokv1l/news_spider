@@ -7,7 +7,7 @@ import requests
 from newspaper import Article
 
 import config
-# from src.database import news_db_col
+from src.database import news_db_col
 
 
 def novayagazeta_parser():
@@ -36,9 +36,9 @@ def novayagazeta_parser():
         for news in news_list:
             try:
                 news_url = 'https://novayagazeta.ru/articles/' + news['slug']
-                # if news_db_col.find_one({'url': news_url}):
-                #     print(f'novayagazeta job ended at {datetime.datetime.now()}')
-                #     return
+                if news_db_col.find_one({'url': news_url}):
+                    print(f'novayagazeta job ended at {datetime.datetime.now()}')
+                    return
                 news_dt = datetime.datetime.fromtimestamp(int(str(news['date'])[:-3]))
                 if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
                     print(f'novayagazeta job ended at {datetime.datetime.now()}')
@@ -54,7 +54,7 @@ def novayagazeta_parser():
                     'datetime': news_dt.isoformat()
                 }
                 print(news_url)
-                # news_db_col.insert_one(data)
+                news_db_col.insert_one(data)
             except Exception as e:
                 print(f'Warning: Error in job')
                 traceback.print_exc()
