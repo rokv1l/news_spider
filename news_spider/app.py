@@ -16,6 +16,7 @@ def main():
         spider_modules.rt.rt_parser, spider_modules.lenta.lenta_parser, spider_modules.aif.aif_parser,
         spider_modules.mk.mk_parser, spider_modules.mbk_news.mbk_parser, spider_modules.kommersant.kommersant_parser,
         spider_modules.regnum.regnum_parser, spider_modules.novayagazeta.novayagazeta_parser,
+        spider_modules.pravda.pravda_parser,
     ]
     scheduler = Scheduler()
     for parser in parsers:
