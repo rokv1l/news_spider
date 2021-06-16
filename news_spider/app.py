@@ -1,7 +1,8 @@
 from multiprocessing import Process, freeze_support
 
 import config
-import spider_modules
+from spider_modules import aif, bfm, echo, icmos, kommersant, kp, lenta, m24, mbk_news, mk, mockva, moslenta, mskagency
+from spider_modules import novayagazeta, pravda, rbc, regnum, ria, riamo, rt, tass, vm
 from src.sсhedule_mp import IntervalJob, Scheduler
 
 freeze_support()
@@ -9,14 +10,14 @@ freeze_support()
 
 def main():
     parsers = [
-        spider_modules.mskagency.mskagency_parser, spider_modules.tass.tass_parser, spider_modules.vm.vm_parser,
-        spider_modules.m24.m24_parser, spider_modules.icmos.icmos_parser, spider_modules.mockva.mockva_parser,
-        spider_modules.riamo.riamo_parser, spider_modules.ria.ria_parser, spider_modules.moslenta.moslenta_parser,
-        spider_modules.kp.kp_parser, spider_modules.echo.echo_parser, spider_modules.rbc.rbc_parser,
-        spider_modules.rt.rt_parser, spider_modules.lenta.lenta_parser, spider_modules.aif.aif_parser,
-        spider_modules.mk.mk_parser, spider_modules.mbk_news.mbk_parser, spider_modules.kommersant.kommersant_parser,
-        spider_modules.regnum.regnum_parser, spider_modules.novayagazeta.novayagazeta_parser,
-        spider_modules.pravda.pravda_parser, spider_modules.bfm.bfm_parser,
+        mskagency.mskagency_parser, tass.tass_parser, vm.vm_parser,
+        m24.m24_parser, icmos.icmos_parser, mockva.mockva_parser,
+        riamo.riamo_parser, ria.ria_parser, moslenta.moslenta_parser,
+        kp.kp_parser, echo.echo_parser, rbc.rbc_parser,
+        rt.rt_parser, lenta.lenta_parser, aif.aif_parser,
+        mk.mk_parser, mbk_news.mbk_parser, kommersant.kommersant_parser,
+        regnum.regnum_parser, novayagazeta.novayagazeta_parser,
+        pravda.pravda_parser, bfm.bfm_parser,
     ]
     scheduler = Scheduler()
     for parser in parsers:

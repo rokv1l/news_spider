@@ -49,8 +49,10 @@ def aif_parser():
                     time_data['year'] = int(str_time[6:10])
                     time_data['month'] = int(str_time[3:5])
                     time_data['day'] = int(str_time[:2])
-
-                news_dt = datetime.datetime(**time_data)
+                try:
+                    news_dt = datetime.datetime(**time_data)
+                except ValueError:
+                    continue
                 if news_dt < dt_now - datetime.timedelta(**config.tracked_time):
                     print(f'aif job ended at {datetime.datetime.now()}')
                     return
