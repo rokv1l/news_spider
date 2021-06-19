@@ -5,3 +5,5 @@ pymongo
 newspaper3k==0.2.8
 flask
 flask_restful
+python-telegram-bot
+loguru

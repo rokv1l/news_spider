@@ -10,6 +10,7 @@ from src.database import news_db_col
 
 class News(Resource):
     def get(self):
+        print('news connection')
         token = request.headers.get("authorization", "").replace("Bearer ", "")
         if token != config.token:
             return {'error': 'Authorization failed'}, 401
@@ -29,5 +30,5 @@ class News(Resource):
                 i["datetime"] = i["datetime"].isoformat()
 
             news.append(i)
-
+        print('done')
         return news, 200

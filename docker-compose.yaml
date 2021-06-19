@@ -1,6 +1,18 @@
 version: '3'
 services:
 
+  bot:
+    build:
+      context: .
+      dockerfile: bot/Dockerfile
+    image: news_spider_bot
+    container_name: news_spider_bot
+    env_file:
+      - .env
+    restart: always
+    tty: True
+    working_dir: /bot
+
   news_spider:
     build:
       context: .
