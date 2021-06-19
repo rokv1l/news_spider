@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 from newspaper import Article
 
 import config
-# from src.database import news_db_col
+from src.database import news_db_col
 
 
 def kommersant_parser():
@@ -38,9 +38,9 @@ def kommersant_parser():
         for article in data.get('data'):
             try:
                 news_url = f'https://www.kommersant.ru/doc/{article["id"]}'
-                # if news_db_col.find_one({'url': news_url}):
-                #     print(f'kommersant job ended at {datetime.datetime.now()}')
-                #     return
+                if news_db_col.find_one({'url': news_url}):
+                    print(f'kommersant job ended at {datetime.datetime.now()}')
+                    return
                 r = requests.get(news_url)
                 if r.status_code != 200:
                     print(
@@ -70,7 +70,7 @@ def kommersant_parser():
                     'datetime': news_dt.isoformat()
                 }
                 print(news_url)
-                # news_db_col.insert_one(data)
+                news_db_col.insert_one(data)
             except Exception as e:
                 print(f'Warning: Error in job')
                 traceback.print_exc()

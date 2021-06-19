@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from newspaper import Article
 
 import config
-# from src.database import news_db_col
+from src.database import news_db_col
 
 
 def pravda_parser():
@@ -33,9 +33,9 @@ def pravda_parser():
         for news in news_list:
             try:
                 news_url = news.find('a').get('href')
-                # if news_db_col.find_one({'url': news_url}):
-                #     print(f'pravda job ended at {datetime.datetime.now()}')
-                #     return
+                if news_db_col.find_one({'url': news_url}):
+                    print(f'pravda job ended at {datetime.datetime.now()}')
+                    return
                 news_dt_str = news.find('time').get('datetime')
                 news_dt = datetime.datetime.fromisoformat(news_dt_str[:-1])
                 if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
@@ -52,7 +52,7 @@ def pravda_parser():
                     'datetime': news_dt.isoformat()
                 }
                 print(news_url)
-                # news_db_col.insert_one(data)
+                news_db_col.insert_one(data)
             except Exception as e:
                 print(f'Warning: Error in job')
                 traceback.print_exc()

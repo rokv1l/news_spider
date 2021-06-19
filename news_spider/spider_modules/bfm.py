@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 from newspaper import Article
 
 import config
-# from src.database import news_db_col
+from src.database import news_db_col
 
 
 def bfm_parser():
@@ -32,9 +32,9 @@ def bfm_parser():
         for news in news_list:
             try:
                 news_url = 'https://www.bfm.ru' + news.find('a', {'class': 'title-link'}).get('href')
-                # if news_db_col.find_one({'url': news_url}):
-                #     print(f'bfm job ended at {datetime.datetime.now()}')
-                #     return
+                if news_db_col.find_one({'url': news_url}):
+                    print(f'bfm job ended at {datetime.datetime.now()}')
+                    return
                 article = Article(news_url, language='ru')
                 r = requests.get(news_url)
                 if r.status_code != 200:
@@ -73,7 +73,7 @@ def bfm_parser():
                     'datetime': news_dt.isoformat()
                 }
                 print(news_url)
-                # news_db_col.insert_one(data)
+                news_db_col.insert_one(data)
             except Exception as e:
                 print(f'Warning: Error in job')
                 traceback.print_exc()
