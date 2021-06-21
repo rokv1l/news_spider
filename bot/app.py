@@ -9,8 +9,7 @@ from bot_modules import common, stats
 messaging_list = []
 
 
-def main():
-    # инициализация пользователей в базу
+if __name__ == '__main__':
     init_users()
 
     updater = Updater(token=config.telegram_token, use_context=True)
@@ -20,7 +19,3 @@ def main():
 
     updater.start_polling()
     updater.idle()
-
-
-if __name__ == '__main__':
-    main()

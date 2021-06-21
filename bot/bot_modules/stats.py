@@ -1,11 +1,10 @@
-from telegram import Update
-from telegram.ext import CommandHandler, MessageHandler, Filters
+
+from telegram.ext import CommandHandler
 
 from src.database import news_db_col
 
 
-def stats(update: Update, context):
-
+def stats(update, context):
     sources_list = [
         'aif', 'bfm', 'echo', 'icmos', 'interfax', 'kommersant', 'kp', 'lenta', 'm24', 'mbk', 'mk', 'mockva',
         'moslenta', 'mskagency', 'novayagazeta', 'pravda', 'rbc', 'regnum', 'rg', 'ria', 'riamo', 'rt', 'tass',

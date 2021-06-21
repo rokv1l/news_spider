@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from newspaper import Article
 
 import config
-from src.database import news_db_col
+from src.database import news_db_col, errors_db_col
 
 
 def mockva_parser():
@@ -60,6 +60,11 @@ def mockva_parser():
             except Exception as e:
                 print(f'Warning: Error in job')
                 traceback.print_exc()
+                errors_db_col.insert_one({
+                    'error': str(traceback.format_exc()),
+                    'checked': False,
+                    'timestamp': datetime.datetime.now().timestamp()
+                })
                 continue
             sleep(config.request_delay)
         page += 1
