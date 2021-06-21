@@ -6,6 +6,8 @@ from src.database import errors_db_col
 
 def errors_mailing():
     while True:
+        if not messaging_list:
+            continue
         cursor = errors_db_col.find_all({'checked': False})
         errors = set()
         for i in cursor:
