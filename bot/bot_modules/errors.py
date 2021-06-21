@@ -1,7 +1,7 @@
 import time
 
 from app import dispatcher
-from config import messaging_list
+from config import messaging_list, mailing_sleep
 from src.database import errors_db_col
 
 
@@ -20,4 +20,4 @@ def errors_mailing():
                 chat_id=_id,
                 text=text
             )
-        time.sleep(60*60)
+        time.sleep(mailing_sleep)
