@@ -1,6 +1,7 @@
 import time
 
-from app import messaging_list, dispatcher
+from app import dispatcher
+from config import messaging_list
 from src.database import errors_db_col
 
 

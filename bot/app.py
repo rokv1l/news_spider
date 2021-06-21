@@ -7,8 +7,6 @@ import config
 from init_users import init_users
 from bot_modules import common, stats, errors
 
-messaging_list = []
-
 
 if __name__ == '__main__':
     init_users()

@@ -3,7 +3,7 @@ from hashlib import sha256
 
 from telegram.ext import CommandHandler, MessageHandler, ConversationHandler, Filters
 
-from app import messaging_list
+from config import messaging_list
 from src.database import news_db_col
 """
 Последнее сообщение которое требует удаления клавиатуры сохраняется в 
