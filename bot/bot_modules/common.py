@@ -4,7 +4,7 @@ from hashlib import sha256
 from telegram.ext import CommandHandler, MessageHandler, ConversationHandler, Filters
 
 from config import messaging_list
-from src.database import news_db_col
+from src.database import users_db_col
 """
 Последнее сообщение которое требует удаления клавиатуры сохраняется в 
 context.user_data['message_for_delete_keyboard']
@@ -24,7 +24,7 @@ def start(update, context):
 
 def authorize(update, context):
     password = update.message.text
-    user = news_db_col.find_one({'password': sha256(password.encode('utf-8')).hexdigest()})
+    user = users_db_col.find_one({'password': sha256(password.encode('utf-8')).hexdigest()})
     if user:
         context.user_data['access'] = 1
         messaging_list.append(update.effective_chat.id)

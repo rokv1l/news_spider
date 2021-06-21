@@ -26,13 +26,8 @@ class News(Resource):
             cursor = news_db_col.find({}, {'_id': 0})
 
         for i in cursor:
-            try:
-                if isinstance(i["datetime"], datetime):
-                    i["datetime"] = i["datetime"].isoformat()
-            except Exception:
-                print('-------------------------------------------------------------------------------------')
-                print(i)
-                print('-------------------------------------------------------------------------------------')
+            if isinstance(i["datetime"], datetime):
+                i["datetime"] = i["datetime"].isoformat()
             news.append(i)
         print('done')
         return news, 200

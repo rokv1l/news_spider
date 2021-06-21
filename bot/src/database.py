@@ -6,3 +6,4 @@ client = MongoClient(mongo_ip, mongo_port)
 db = client.news_parser
 news_db_col = db.news
 errors_db_col = db.errors
+users_db_col = db.users
