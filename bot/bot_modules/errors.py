@@ -9,7 +9,7 @@ def errors_mailing():
     while True:
         if not messaging_list:
             continue
-        cursor = errors_db_col.find_all({'checked': False})
+        cursor = errors_db_col.find({'checked': False})
         errors = set()
         for i in cursor:
             errors_db_col.update_one(i, {'$set': {'checked': True}})
