@@ -1,4 +1,5 @@
 # https://www.msk.kp.ru/online/
+import json
 import datetime
 import traceback
 from time import sleep
@@ -12,8 +13,11 @@ from src.database import news_db_col, errors_db_col
 
 def kp_parser():
     print(f'kp job started at {datetime.datetime.now()}')
-    page = 1
+    page = 1000
     while True:
+        if page == 0:
+            print(f'kp job ended at {datetime.datetime.now()}')
+            return
         r = requests.get(
             'https://s8.stc.m.kpcdn.net/content/api/1/pages/get.json/result/',
             params={
@@ -30,8 +34,8 @@ def kp_parser():
                 f'at {datetime.datetime.now()}'
             )
             return
-        data = r.json()
-        news_list = data.get('childs')
+        raw_data = r.json()
+        news_list = raw_data.get('childs')
         for news in news_list:
             try:
                 news_url = 'https://www.msk.kp.ru/online/news/' + str(news['@id'])
@@ -62,10 +66,10 @@ def kp_parser():
                     'checked': False,
                     'timestamp': datetime.datetime.now().timestamp()
                 })
-                continue
                 sleep(10)
+                continue
             sleep(config.request_delay)
-        page += 1
+        page = int(raw_data['meta'][1]['value']) - 1
 
 
 if __name__ == '__main__':
