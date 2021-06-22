@@ -63,6 +63,7 @@ def kp_parser():
                     'timestamp': datetime.datetime.now().timestamp()
                 })
                 continue
+                sleep(10)
             sleep(config.request_delay)
         page += 1
 

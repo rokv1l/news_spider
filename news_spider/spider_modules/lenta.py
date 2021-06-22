@@ -43,7 +43,6 @@ def lenta_parser():
             if not re.match(r'^https', news_url):
                 news_url = 'https://lenta.ru' + news_url
             if news_db_col.find_one({'url': news_url}):
-                print(f'lenta job ended at {datetime.datetime.now()}')
                 continue
             news = Article(news_url, language='ru')
             news.download()
@@ -65,8 +64,10 @@ def lenta_parser():
                 'checked': False,
                 'timestamp': datetime.datetime.now().timestamp()
             })
+            sleep(10)
             continue
         sleep(config.request_delay)
+    print(f'lenta job ended at {datetime.datetime.now()}')
 
 
 if __name__ == '__main__':

@@ -82,6 +82,7 @@ def ria_parser():
                     'checked': False,
                     'timestamp': datetime.datetime.now().timestamp()
                 })
+                sleep(10)
                 continue
             sleep(config.request_delay)
 
