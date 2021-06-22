@@ -33,7 +33,7 @@ def mskagency_parser():
                 if news.get('class') == ['date']:
                     continue
                 news_date_str = news.get('data-datei')
-                news_time_str = news.find('div', {'class': 'time'}).text
+                news_time_str = news.find('div', {'class': 'time'}).text[-5:]
                 news_dt = datetime.datetime.fromisoformat(f'{news_date_str[:4]}-{news_date_str[4:6]}-{news_date_str[6:]}T{news_time_str}:00')
                 if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
                     print(f'mskagency job ended at {datetime.datetime.now()}')

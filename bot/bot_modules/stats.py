@@ -4,6 +4,14 @@ from telegram.ext import CommandHandler
 from src.database import news_db_col
 
 
+def access_control(func):
+    def inner(update, context):
+        if context.user_data.get('access'):
+            func(update, context)
+    return inner
+
+
+@access_control
 def stats(update, context):
     sources_list = [
         'aif', 'bfm', 'echo', 'icmos', 'interfax', 'kommersant', 'kp', 'lenta', 'm24', 'mbk', 'mk', 'mockva',
