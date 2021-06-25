@@ -28,11 +28,12 @@ def tvrain_parser():
         news_list = soup.find('div', {'class': 'newsline__block'}).find_all('div', {'class': 'newsline__row'})
         for news in news_list:
             try:
-                href = news.find('a').get('href')
-                if href:
-                    news_url = 'https://tvrain.ru' + href
+                link_tag = news.find('a')
+                if link_tag:
+                    news_url = 'https://tvrain.ru' + link_tag.get('href')
                 else:
                     continue
+
                 if news_db_col.find_one({'url': news_url}):
                     print(f'tvrain job ended at {datetime.datetime.now()}')
                     return
