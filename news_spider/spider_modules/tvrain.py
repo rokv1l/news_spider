@@ -51,7 +51,7 @@ def tvrain_parser():
                 month = ['января', 'февраля', 'мартa', "апреля", "мая", "июня", "июля", "августа", "сентября", "октября", "ноября", "декабря"]
                 news_dt = datetime.datetime(**{
                     'year': datetime.datetime.now().year,
-                    'month': month.index(news_dt_str[3:-7])+1,
+                    'month': month.index(news_dt_str[-11:-7])+1,
                     'day': int(news_dt_str[:2]),
                     'hour': int(news_dt_str[-5:-3]),
                     'minute': int(news_dt_str[-2:]),
