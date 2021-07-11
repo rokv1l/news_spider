@@ -4,7 +4,7 @@ import config
 from spider_modules import (aif, bfm, echo, icmos, kommersant, kp, lenta, m24, mbk_news, mk, mockva, moslenta,
                             mskagency, novayagazeta, pravda, rbc, regnum, ria, riamo, rt, tass, vm, interfax, rg,
                             tvrain, mn, bezformata_msk, bezformata_podmoskovye, inregiontoday, molnet, moscow_ru_today,
-                            mosday, moskva_tyt, mosreg, mperspektiva, msk_news, msknovosti)
+                            mosday, moskva_tyt, mosreg, mperspektiva, msk_news, msknovosti, as6400825)
 from src.sсhedule_mp import IntervalJob, Scheduler
 
 freeze_support()
@@ -20,7 +20,7 @@ def main():
         mn.mn_parser, bezformata_msk.bezformata_msk_parser, bezformata_podmoskovye.bezformata_podmoskovye_parser,
         inregiontoday.inregiontoday_parser, molnet.molnet_parser, moscow_ru_today.moscow_ru_today_parser,
         mosday.mosday_parser, moskva_tyt.moskva_tyt_parser, mosreg.mosreg_parser, mperspektiva.mperspektiva_parser,
-        msk_news.msk_news_parser, msknovosti.msknovosti_parser
+        msk_news.msk_news_parser, msknovosti.msknovosti_parser, as6400825.as6400825_parser
     ]
     scheduler = Scheduler()
     for parser in parsers:
