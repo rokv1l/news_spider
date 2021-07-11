@@ -1,6 +1,5 @@
 import datetime
 import logging
-import re
 import traceback
 from time import sleep
 
@@ -9,64 +8,56 @@ from bs4 import BeautifulSoup
 from newspaper import Article
 
 import config
+
+
 from src.database import news_db_col, errors_db_col
 
 
-def bfm_parser():
-    print(f'bfm job started at {datetime.datetime.now()}')
-    page = 1
+def moskva_tyt_parser():
+    print(f'moskva_tyt job started at {datetime.datetime.now()}')
+    search_dt = datetime.datetime.now().date()
     while True:
-        url = 'https://www.bfm.ru/news'
-        params = {'type': 'news', 'page': page}
-        r = requests.get(url, params=params)
+        r = requests.get(f'https://www.moskva-tyt.ru/news/{search_dt.isoformat().replace("-", "")}.html')
         if r.status_code != 200:
             print(
-                f'bfm job error, request status code != 200\n'
+                f'moskva_tyt job error, request status code != 200\n'
                 f'url: {r.url}\n'
                 f'status code: {r.status_code}\n'
                 f'at {datetime.datetime.now()}'
             )
             return
         soup = BeautifulSoup(r.text, 'lxml')
-        news_list = soup.find('section', {'class': 'search-list'}).find_all('li')
+        news_list = soup.find_all('div', {'class': 'next'})
         for news in news_list:
             try:
-                news_url = 'https://www.bfm.ru' + news.find('a', {'class': 'title-link'}).get('href')
+                news_url = 'https://www.moskva-tyt.ru' + news.find('a').get('href')
                 if news_db_col.find_one({'url': news_url}):
-                    print(f'bfm job ended at {datetime.datetime.now()}')
+                    print(f'moskva_tyt job ended at {datetime.datetime.now()}')
                     return
-                r = requests.get(news_url)
+                r = requests.get(news_url, allow_redirects=True)
                 if r.status_code != 200:
                     print(
-                        f'bfm job error, request status code != 200\n'
+                        f'moskva_tyt job error, request status code != 200\n'
                         f'url: {r.url}\n'
                         f'status code: {r.status_code}\n'
                         f'at {datetime.datetime.now()}'
                     )
                     return
                 soup = BeautifulSoup(r.text, 'lxml')
-                str_time = soup.find('span', {'class': 'date'}).contents[0][2:-2]
-                month = ['января', 'февраля', 'марта', "апреля", "мая", "июня", "июля", "августа", "сентября",
-                         "октября", "ноября", "декабря"]
-                news_month = re.search(r'[а-яА-Я]+', str_time).group()
-                time_data = {
-                    'year': int(str_time[-11:-7]),
-                    'month': month.index(news_month) + 1,
-                    'day': int(str_time[:2] if str_time[:2].isdigit() else str_time[:1]),
-                    'hour': int(str_time[-5:-3]),
-                    'minute': int(str_time[-2:]),
-                    'second': 0,
-                    'microsecond': 0
-                }
-                news_dt = datetime.datetime(**time_data)
+                news_time_str = soup.find('span', {'class': 'datenews'}).text
+                months = ['Января', 'Февраля', 'Марта', 'Апреля', 'Мая', 'Июня', 'Июля', 'Августа', 'Сентября',
+                          'Октября', 'Ноября', 'Декабря']
+                m_num = months.index(news_time_str[3:-11])
+                news_time_str = news_time_str[:3] + f'{m_num if m_num > 9 else f"0{m_num}"}' + news_time_str[-11:]
+                news_dt = datetime.datetime.strptime(news_time_str, '%d %m %Y %H:%M')
                 if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
-                    print(f'm24 job ended at {datetime.datetime.now()}')
+                    print(f'moskva_tyt job ended at {datetime.datetime.now()}')
                     return
                 article = Article(news_url, language='ru')
                 article.set_html(r.text)
                 article.parse()
                 data = {
-                    'source': 'bfm',
+                    'source': 'moskva_tyt',
                     'url': news_url,
                     'title': article.title,
                     'content': article.text,
@@ -85,8 +76,8 @@ def bfm_parser():
                 sleep(10)
                 continue
             sleep(config.request_delay)
-        page += 1
+        search_dt = search_dt - datetime.timedelta(days=1)
 
 
 if __name__ == '__main__':
-    bfm_parser()
+    moskva_tyt_parser()

@@ -1,7 +1,7 @@
 import datetime
 import logging
-import traceback
 import re
+import traceback
 from time import sleep
 
 import requests
@@ -12,52 +12,40 @@ import config
 from src.database import news_db_col, errors_db_col
 
 
-def aif_parser():
-    print(f'aif job started at {datetime.datetime.now()}')
+def moscow_ru_today_parser():
+    print(f'moscow_ru_today job started at {datetime.datetime.now()}')
     page = 1
     while True:
-        r = requests.post(f'https://aif.ru/moscow', data={'page': page})
+        url = f'https://moscow.ru.today/news/page/{page}/'
+        r = requests.get(url)
         if r.status_code != 200:
             print(
-                f'aif job error, request status code != 200\n'
+                f'moscow_ru_today job error, request status code != 200\n'
                 f'url: {r.url}\n'
                 f'status code: {r.status_code}\n'
                 f'at {datetime.datetime.now()}'
             )
             return
         soup = BeautifulSoup(r.text, 'lxml')
-        news_list = soup.find_all('div', {'class': 'list_item'})
+        news_list = soup.find_all('div', {'class': 'col-xs-12 col-sm-6'})
         for news in news_list:
             try:
                 news_url = news.find('a').get('href')
                 if news_db_col.find_one({'url': news_url}):
-                    print(f'aif job ended at {datetime.datetime.now()}')
+                    print(f'moscow_ru_today job ended at {datetime.datetime.now()}')
                     return
-                str_time = news.find('span', {'class': 'text_box__date'}).text
-                dt_now = datetime.datetime.now()
-                time_data = {
-                    'hour': int(str_time[:2]),
-                    'minute': int(str_time[-2:]),
-                    'second': 0,
-                    'microsecond': 0,
-                }
-                if re.findall(r'^\d{2}:\d{2}$', str_time):
-                    time_data['year'] = dt_now.year
-                    time_data['month'] = dt_now.month
-                    time_data['day'] = dt_now.day
-                elif re.findall(r'^\d{2}\.\d{2}\.\d{4}\s\d{2}:\d{2}$', str_time):
-                    time_data['year'] = int(str_time[6:10])
-                    time_data['month'] = int(str_time[3:5])
-                    time_data['day'] = int(str_time[:2])
-                news_dt = datetime.datetime(**time_data)
-                if news_dt < dt_now - datetime.timedelta(**config.tracked_time):
-                    print(f'aif job ended at {datetime.datetime.now()}')
+                news_dt_tag = news.find('div', {'itemprop': 'datePublished'})
+                if not news_dt_tag:
+                    news_dt_tag = news.find('span', {'itemprop': 'datePublished'})
+                news_dt = datetime.datetime.fromisoformat(news_dt_tag.get('content')[:-6])
+                if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
+                    print(f'm24 job ended at {datetime.datetime.now()}')
                     return
                 article = Article(news_url, language='ru')
                 article.download()
                 article.parse()
                 data = {
-                    'source': 'aif',
+                    'source': 'moscow_ru_today',
                     'url': news_url,
                     'title': article.title,
                     'content': article.text,
@@ -80,4 +68,4 @@ def aif_parser():
 
 
 if __name__ == '__main__':
-    aif_parser()
+    moscow_ru_today_parser()
