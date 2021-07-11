@@ -100,9 +100,9 @@ def molnet_parser():
                 article = Article(news_db_url, language='ru', config=config.newspaper_config)
                 try:
                     article.download()
+                    article.parse()
                 except ArticleException:
                     continue
-                article.parse()
                 data = {
                     'source': 'molnet',
                     'url': news_db_url,
