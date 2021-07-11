@@ -1,5 +1,3 @@
-# Писал Лёнин соколёнок
-
 import datetime
 import traceback
 import re
@@ -34,13 +32,22 @@ def molnet_parser():
         soup = BeautifulSoup(r.text, 'lxml')
         news_div = soup.find('div', {'class': 'l-col__inner'})
         news_list = news_div.find_all('a')
+
+        for wer in news_list:
+            if wer.has_attr('class'):
+                if wer['class'][0] == 'itemlist__b-img':
+                    news_list.remove(wer)
+                elif wer['class'][0] == 'itemlist__author':
+                    news_list.remove(wer)
+
         for i in news_list:
             if i.get('href').startswith('infocity') or i.get('href').startswith('vao'):
                 news_list.remove(i)
+
         for news in news_list:
             try:
                 news_url = news.get('href')
-                news_db_url = f"https://www.molnet.ru{news_url}"
+                news_db_url = f"http://www.molnet.ru{news_url}"
                 if news_db_col.find_one({'url': news_db_url}):
                     print(f'molnet job ended at {datetime.datetime.now()}')
                     return
@@ -59,10 +66,10 @@ def molnet_parser():
                             elif news.find_parent('div').find('p') is None:
                                 if news_url.startswith('infocity') or news_url.startswith('vao'):
                                     page += 1
+                                    break
                                 else:
                                     str_time = news.find_parent('li').find('span').text.split("•")[-1]
                                     str_time = str_time[1:]
-
                     else:
                         continue
 
@@ -76,19 +83,14 @@ def molnet_parser():
                 }
 
                 if str_time == 'Вчера':
-                    time_data.update({'year': dt_now.year})
-                    time_data.update({'month': dt_now.month})
-                    time_data.update({'day': dt_now.day - 1})
+                    time_data.update({'year': dt_now.year, 'month': dt_now.month, 'day': dt_now.day - 1})
                 elif re.findall(r'^\d{2}:\d{2}$', str_time):
-                    time_data.update({'year': dt_now.year})
-                    time_data.update({'month': dt_now.month})
-                    time_data.update({'day': dt_now.day})
-                    time_data.update({'hour': int(str_time[:2])})
-                    time_data.update({'minute': int(str_time[-2:])})
+                    time_data.update(
+                        {'year': dt_now.year, 'month': dt_now.month, 'day': dt_now.day, 'hour': int(str_time[:2]),
+                         'minute': int(str_time[-2:])})
                 elif re.findall(r'^\d{2}\.\d{2}\.\d{4}$', str_time):
-                    time_data.update({'year': int(str_time[6:10])})
-                    time_data.update({'month': int(str_time[3:5])})
-                    time_data.update({'day': int(str_time[:2])})
+                    time_data.update(
+                        {'year': int(str_time[6:10]), 'month': int(str_time[3:5]), 'day': int(str_time[:2])})
 
                 news_dt = datetime.datetime(**time_data)
                 if news_dt < dt_now - datetime.timedelta(**config.tracked_time):
@@ -104,7 +106,7 @@ def molnet_parser():
                     'content': article.text,
                     'datetime': news_dt.isoformat()
                 }
-                print(news_db_url)
+                print(news_url)
                 news_db_col.insert_one(data)
             except Exception as e:
                 print(e)
