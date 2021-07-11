@@ -43,7 +43,7 @@ def moslenta_parser():
                 if news_db_col.find_one({'url': news_url}):
                     print(f'moslenta job ended at {datetime.datetime.now()}')
                     return
-                article = Article(news_url, language='ru')
+                article = Article(news_url, language='ru', config=config.newspaper_config)
                 article.download()
                 article.parse()
                 data = {

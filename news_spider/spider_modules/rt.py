@@ -43,7 +43,7 @@ def rt_parser():
                 if news_db_col.find_one({'url': news_url}):
                     print(f'rt job ended at {datetime.datetime.now()}')
                     return
-                news = Article(news_url, language='ru')
+                news = Article(news_url, language='ru', config=config.newspaper_config)
                 news.download()
                 news.parse()
                 data = {

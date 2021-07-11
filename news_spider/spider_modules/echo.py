@@ -46,7 +46,7 @@ def echo_parser():
                 if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
                     print(f'echo job ended at {datetime.datetime.now()}')
                     return
-                article = Article(news_url, language='ru')
+                article = Article(news_url, language='ru', config=config.newspaper_config)
                 article.download()
                 article.parse()
                 data = {

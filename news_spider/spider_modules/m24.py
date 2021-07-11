@@ -42,7 +42,7 @@ def m24_parser():
                 if news_db_col.find_one({'url': news_url}):
                     print(f'm24 job ended at {datetime.datetime.now()}')
                     return
-                article = Article(news_url, language='ru')
+                article = Article(news_url, language='ru', config=config.newspaper_config)
                 r = requests.get(news_url)
                 if r.status_code != 200:
                     print(

@@ -56,7 +56,7 @@ def icmos_parser():
                 if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
                     print(f'icmos job ended at {datetime.datetime.now()}')
                     return
-                article = Article(news_url, language='ru')
+                article = Article(news_url, language='ru', config=config.newspaper_config)
                 article.set_html(r.text)
                 article.parse()
                 data = {

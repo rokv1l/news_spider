@@ -44,7 +44,7 @@ def lenta_parser():
                 news_url = 'https://lenta.ru' + news_url
             if news_db_col.find_one({'url': news_url}):
                 continue
-            news = Article(news_url, language='ru')
+            news = Article(news_url, language='ru', config=config.newspaper_config)
             news.download()
             news.parse()
             data = {
