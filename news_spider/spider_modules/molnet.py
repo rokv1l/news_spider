@@ -6,6 +6,7 @@ from time import sleep
 import requests
 from bs4 import BeautifulSoup
 from newspaper import Article
+from newspaper import ArticleException
 
 import config
 
@@ -97,7 +98,10 @@ def molnet_parser():
                     print(f'molnet job ended at {datetime.datetime.now()}')
                     return
                 article = Article(news_db_url, language='ru', config=config.newspaper_config)
-                article.download()
+                try:
+                    article.download()
+                except ArticleException:
+                    continue
                 article.parse()
                 data = {
                     'source': 'molnet',

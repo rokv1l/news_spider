@@ -7,6 +7,7 @@ from time import sleep
 import requests
 from bs4 import BeautifulSoup
 from newspaper import Article
+from newspaper import ArticleException
 
 import config
 from src.database import news_db_col, errors_db_col
@@ -44,7 +45,10 @@ def mosday_parser():
                     print(f'mosday job ended at {datetime.datetime.now()}')
                     return
                 article = Article(news_url, language='ru', config=config.newspaper_config)
-                article.download()
+                try:
+                    article.download()
+                except ArticleException:
+                    continue
                 article.parse()
                 data = {
                     'source': 'mosday',
