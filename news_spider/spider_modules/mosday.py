@@ -44,11 +44,11 @@ def mosday_parser():
                 if news_dt < datetime.datetime.now() - datetime.timedelta(**config.tracked_time):
                     print(f'mosday job ended at {datetime.datetime.now()}')
                     return
-                article = Article(news_url, language='ru', config=config.newspaper_config)
                 try:
+                    article = Article(news_url, language='ru', config=config.newspaper_config)
                     article.download()
                     article.parse()
-                except ArticleException:
+                except Exception:
                     continue
                 data = {
                     'source': 'mosday',
