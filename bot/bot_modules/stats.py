@@ -16,7 +16,8 @@ def stats(update, context):
     sources_list = [
         'aif', 'bfm', 'echo', 'icmos', 'interfax', 'kommersant', 'kp', 'lenta', 'm24', 'mbk', 'mk', 'mockva',
         'moslenta', 'mskagency', 'novayagazeta', 'pravda', 'rbc', 'regnum', 'rg', 'ria', 'riamo', 'rt', 'tass',
-        'tvrain', 'vm'
+        'tvrain', 'vm', 'mn', 'bezformata_msk', 'bezformata_podmoskovye', 'inregiontoday', 'molnet', 'moscow_ru_today',
+        'mosday', 'moskva_tyt', 'mosreg', 'mperspektiva', 'msk_news', 'msknovosti',
     ]
     text = f'Отчёт о колличестве новостей\n' \
            f'Всего новостей - {news_db_col.count()}\n'
