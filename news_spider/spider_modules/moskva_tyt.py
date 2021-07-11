@@ -4,6 +4,7 @@ import traceback
 from time import sleep
 
 import requests
+from requests.exceptions import TooManyRedirects
 from bs4 import BeautifulSoup
 from newspaper import Article
 
@@ -34,7 +35,10 @@ def moskva_tyt_parser():
                 if news_db_col.find_one({'url': news_url}):
                     print(f'moskva_tyt job ended at {datetime.datetime.now()}')
                     return
-                r = requests.get(news_url, allow_redirects=True)
+                try:
+                    r = requests.get(news_url, allow_redirects=True)
+                except TooManyRedirects:
+                    continue
                 if r.status_code != 200:
                     print(
                         f'moskva_tyt job error, request status code != 200\n'
