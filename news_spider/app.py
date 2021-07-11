@@ -1,10 +1,10 @@
 from multiprocessing import Process, freeze_support
 
 import config
-from spider_modules import aif, bfm, echo, icmos, kommersant, kp, lenta, m24, mbk_news, mk, mockva, moslenta
-from spider_modules import mskagency, novayagazeta, pravda, rbc, regnum, ria, riamo, rt, tass, vm, interfax, rg
-from spider_modules import tvrain, mn, bezformata_msk, bezformata_podmoskovye, inregiontoday, molnet, moscow_ru_today
-from spider_modules import mosday, moskva_tyt, mosreg, mperspektiva, msk_news, msknovosti
+from spider_modules import (aif, bfm, echo, icmos, kommersant, kp, lenta, m24, mbk_news, mk, mockva, moslenta,
+                            mskagency, novayagazeta, pravda, rbc, regnum, ria, riamo, rt, tass, vm, interfax, rg,
+                            tvrain, mn, bezformata_msk, bezformata_podmoskovye, inregiontoday, molnet, moscow_ru_today,
+                            mosday, moskva_tyt, mosreg, mperspektiva, msk_news, msknovosti)
 from src.sсhedule_mp import IntervalJob, Scheduler
 
 freeze_support()
