@@ -15,14 +15,16 @@ class News(Resource):
             return {'error': 'Authorization failed'}, 401
         parser = reqparse.RequestParser()
         parser.add_argument('source', required=False)
+        parser.add_argument('limit', required=True)
+        parser.add_argument('offset', required=True)
         args = parser.parse_args()
 
         news = []
 
         if args.get('source'):
-            cursor = news_db_col.find({'source': args['source']}, {'_id': 0})
+            cursor = news_db_col.find({'source': args['source']}, {'_id': 0}).skip(args['offset']).limit(args['limit'])
         else:
-            cursor = news_db_col.find({}, {'_id': 0})
+            cursor = news_db_col.find({}, {'_id': 0}).skip(args['offset']).limit(args['limit'])
 
         for i in cursor:
             if isinstance(i["datetime"], datetime):
