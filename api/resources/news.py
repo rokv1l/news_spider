@@ -15,8 +15,8 @@ class News(Resource):
             return {'error': 'Authorization failed'}, 401
         parser = reqparse.RequestParser()
         parser.add_argument('source', required=False)
-        parser.add_argument('limit', required=True)
-        parser.add_argument('offset', required=True)
+        parser.add_argument('limit', type=int, required=True)
+        parser.add_argument('offset', type=int, required=True)
         args = parser.parse_args()
 
         news = []
