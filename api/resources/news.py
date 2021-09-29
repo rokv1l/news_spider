@@ -14,15 +14,17 @@ class News(Resource):
         if token != config.token:
             return {'error': 'Authorization failed'}, 401
         parser = reqparse.RequestParser()
-        parser.add_argument('source', required=False)
         parser.add_argument('limit', type=int, required=True)
         parser.add_argument('offset', type=int, required=True)
+        parser.add_argument('filter', type=str)
+        parser.add_argument('filter_by_field', type=str)
         args = parser.parse_args()
-
         news = []
 
-        if args.get('source'):
-            cursor = news_db_col.find({'source': args['source']}, {'_id': 0}).skip(args['offset']).limit(args['limit'])
+        if args.get('filter') and args.get('filter_by_field') not in ['source', 'url', 'title', 'content', 'datetime']:
+            return {'content': 'filter_by_field must be required correctly if filter is defined'}, 400
+        elif args.get('filter') and args.get('filter_by_field'):
+            cursor = news_db_col.find({args.get('filter_by_field'): {"$regex": f"(?i).*{args.get('filter')}.*"}}, {'_id': 0}).skip(args['offset']).limit(args['limit'])
         else:
             cursor = news_db_col.find({}, {'_id': 0}).skip(args['offset']).limit(args['limit'])
 
@@ -31,3 +33,4 @@ class News(Resource):
                 i["datetime"] = i["datetime"].isoformat()
             news.append(i)
         return news, 200
+

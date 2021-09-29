@@ -1,32 +1,56 @@
 from multiprocessing import Process, freeze_support
 
 import config
-from spider_modules import (aif, bfm, echo, icmos, kommersant, kp, lenta, m24, mbk_news, mk, mockva, moslenta,
-                            mskagency, novayagazeta, pravda, rbc, regnum, ria, riamo, rt, tass, vm, interfax, rg,
-                            tvrain, mn, bezformata_msk, bezformata_podmoskovye, inregiontoday, molnet, moscow_ru_today,
-                            mosday, moskva_tyt, mosreg, mperspektiva, msk_news, msknovosti, as6400825)
+from parser_modules.parsers import portal_parser
 from src.sсhedule_mp import IntervalJob, Scheduler
 
 freeze_support()
 
 
 def main():
-    parsers = (
-        mskagency.mskagency_parser, tass.tass_parser, vm.vm_parser, m24.m24_parser, icmos.icmos_parser,
-        mockva.mockva_parser, riamo.riamo_parser, ria.ria_parser, moslenta.moslenta_parser, kp.kp_parser,
-        echo.echo_parser, rbc.rbc_parser, rt.rt_parser, lenta.lenta_parser, aif.aif_parser, mk.mk_parser,
-        mbk_news.mbk_parser, kommersant.kommersant_parser, regnum.regnum_parser, novayagazeta.novayagazeta_parser,
-        pravda.pravda_parser, bfm.bfm_parser, interfax.interfax_parser, rg.rg_parser, tvrain.tvrain_parser,
-        mn.mn_parser, bezformata_msk.bezformata_msk_parser, bezformata_podmoskovye.bezformata_podmoskovye_parser,
-        inregiontoday.inregiontoday_parser, molnet.molnet_parser, moscow_ru_today.moscow_ru_today_parser,
-        mosday.mosday_parser, moskva_tyt.moskva_tyt_parser, mosreg.mosreg_parser, mperspektiva.mperspektiva_parser,
-        msk_news.msk_news_parser, msknovosti.msknovosti_parser, as6400825.as6400825_parser
+    papers = (
+        'https://aif.ru',
+        'https://as6400825.ru',
+        'https://bezformata.com/',
+        'https://www.bfm.ru',
+        'https://echo.msk.ru/news/',
+        'https://icmos.ru/news',
+        'https://msk.inregiontoday.ru',
+        'https://www.interfax.ru/moscow/news/',
+        'https://www.kommersant.ru/theme/storydocs',
+        'https://www.rostov.kp.ru/',
+        'https://lenta.ru/rubrics/russia/moscow/',
+        'https://www.m24.ru/news',
+        'https://mk.ru/news',
+        'https://www.mn.ru/',
+        'https://mockva.ru/',
+        'https://www.molnet.ru',
+        'https://moscow.ru.today/',
+        'http://mosday.ru/news',
+        'https://www.moskva-tyt.ru',
+        'https://moslenta.ru',
+        'https://mtdi.mosreg.ru/',
+        'https://mperspektiva.ru/',
+        'http://msk-news.net/',
+        'https://www.mskagency.ru',
+        'https://msknovosti.ru/',
+        'https://novayagazeta.ru/',
+        'https://www.pravda.ru/',
+        'https://www.rbc.ru',
+        'https://regnum.ru/',
+        'https://rg.ru/',
+        'https://ria.ru',
+        'https://riamo.ru/',
+        'https://russian.rt.com',
+        'https://tass.ru',
+        'https://tvrain.ru/',
+        'https://vm.ru',
     )
     scheduler = Scheduler()
-    for parser in parsers:
-        process = Process(target=parser)
+    for paper in papers:
+        process = Process(target=portal_parser(paper))
         process.start()
-        scheduler.add_job(IntervalJob(parser.__name__, parser, delay=config.run_jobs_delay))
+        scheduler.add_job(IntervalJob(paper, portal_parser(paper), delay=config.run_jobs_delay))
     scheduler.run_pending()
 
 

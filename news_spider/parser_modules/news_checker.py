@@ -10,6 +10,7 @@ from parser_modules.parsers import page_parser
 
 
 def news_checker():
+    """Посещает страницы новостей и проверяет на изменения или удаление"""
     start = datetime.fromisoformat(f'{date.today().isoformat()}T00:00:00')
     end = start + timedelta(days=1)
     while True:
@@ -25,7 +26,7 @@ def news_checker():
                 changed_news_col.insert_one({
                     'url': news_item['url'],
                     'title': news_item['title'],
-                    'text': news_item['text'],
+                    'content': news_item['text'],
                     'datetime': datetime.now().isoformat(),
                     'action': 'deleted'
                 })
@@ -36,7 +37,7 @@ def news_checker():
                     changed_news_col.insert_one({
                         'url': news_item['url'],
                         'title': title,
-                        'text': text,
+                        'content': text,
                         'datetime': datetime.now().isoformat(),
                         'action': 'changed'
                     })
