@@ -45,7 +45,7 @@ def portal_parser(url):
         if news_db_col.find_one({'url': article.url}):
             continue
         data = page_parser(article.url)
-        if data == 404 or not data:
+        if data == 404 or not data or not data[1] or not data[0]:
             continue
         news_db_col.insert_one({
             'source': url,
