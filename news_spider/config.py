@@ -10,4 +10,4 @@ request_delay = 7
 tracked_time = {'days': 90}
 
 newspaper_config = Config()
-newspaper_config.request_timeout = 8
+newspaper_config.request_timeout = 6
