@@ -38,7 +38,7 @@ def portal_parser(url):
         return
     domen = re.search(pattern_2, domen.group()).group()[:-1]
     # --------------------------------
-
+    tmp_count = 0
     for article in news_paper.articles:
         if domen not in article.url:
             continue
@@ -54,3 +54,5 @@ def portal_parser(url):
             'content': data[1],
             'datetime': datetime.now().isoformat()
         })
+        tmp_count += 1
+    logger.info(f'found {tmp_count} new news in {url} at {datetime.now()}')
