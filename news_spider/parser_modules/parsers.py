@@ -4,12 +4,10 @@ import newspaper
 from datetime import datetime
 from loguru import logger
 
-from newspaper import Config, ArticleException
+from newspaper import ArticleException
 
 from src.database import news_db_col
-
-newspaper_config = Config()
-newspaper_config.request_timeout = 3
+from config import newspaper_config
 
 
 @logger.catch()
