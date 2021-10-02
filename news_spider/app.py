@@ -48,9 +48,10 @@ def main():
     )
     scheduler = Scheduler()
     for paper in papers:
-        process = Process(target=portal_parser(paper))
+        process = Process(target=portal_parser, args=(paper, ))
+        process.daemon = True
         process.start()
-        scheduler.add_job(IntervalJob(paper, portal_parser(paper), delay=config.run_jobs_delay))
+        scheduler.add_job(IntervalJob(paper, portal_parser, args=(paper, ), delay=config.run_jobs_delay))
     scheduler.run_pending()
 
 
