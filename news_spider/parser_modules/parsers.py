@@ -4,11 +4,12 @@ from time import sleep
 from datetime import datetime
 from loguru import logger
 
+from pymongo import MongoClient
 from newspaper import ArticleException
 
 import config
-from src.database import news_db_col
 from config import newspaper_config
+from config import mongo_ip, mongo_port
 
 
 def page_parser(url):
@@ -26,14 +27,15 @@ def page_parser(url):
 def portal_parser(url):
     news_paper = newspaper.build(url, language='ru', memoize_articles=False)
 
+    client = MongoClient(mongo_ip, mongo_port)
     count = 0
     for article in news_paper.articles:
-        if news_db_col.find_one({'url': article.url}):
+        if client.news_parser.news.find_one({'url': article.url}):
             continue
         data = page_parser(article.url)
         if data == 404 or not data or not data[1] or not data[0]:
             continue
-        news_db_col.insert_one({
+        client.news_parser.news.insert_one({
             'source': url,
             'url': article.url,
             'title': data[0],
