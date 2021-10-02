@@ -1,11 +1,12 @@
 
-import re
+from time import sleep
 import newspaper
 from datetime import datetime
 from loguru import logger
 
 from newspaper import ArticleException
 
+import config
 from src.database import news_db_col
 from config import newspaper_config
 
@@ -40,4 +41,5 @@ def portal_parser(url):
             'datetime': datetime.now().isoformat()
         })
         tmp_count += 1
+        sleep(config.request_delay)
     logger.info(f'found {tmp_count} new news in {url} at {datetime.now()}')
