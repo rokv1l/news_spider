@@ -4,11 +4,14 @@ from time import sleep
 from datetime import datetime
 from loguru import logger
 
-from newspaper import ArticleException
+from newspaper import ArticleException, Article
 
 import config
-from src.database import news_db_col
 from config import newspaper_config
+
+from pymongo import MongoClient
+
+from config import mongo_ip, mongo_port
 
 
 def page_parser(url):
@@ -24,22 +27,26 @@ def page_parser(url):
 
 
 def portal_parser(url):
-    news_paper = newspaper.build(url, language='ru', memoize_articles=False)
-
-    count = 0
-    for article in news_paper.articles:
-        if news_db_col.find_one({'url': article.url}):
-            continue
-        data = page_parser(article.url)
-        if data == 404 or not data or not data[1] or not data[0]:
-            continue
-        news_db_col.insert_one({
-            'source': url,
-            'url': article.url,
-            'title': data[0],
-            'content': data[1],
-            'datetime': datetime.now().isoformat()
-        })
-        count += 1
-        sleep(config.request_delay)
+    news_paper = newspaper.build(url, language='ru')
+    with MongoClient(mongo_ip, mongo_port) as client:
+        count = 0
+        for article in news_paper.articles:
+            if client.news_parser.news.find_one({'url': article.url}):
+                continue
+            article.download()
+            if article.download_state == 1:
+                continue
+            article.parse()
+            if article.title or not article.text:
+                continue
+            client.news_parser.news.insert_one({
+                'source': url,
+                'url': article.url,
+                'title': article.title,
+                'content': article.text,
+                'datetime': datetime.now().isoformat()
+            })
+            count += 1
+            sleep(config.request_delay)
+    del news_paper
     logger.info(f'found {count} new news in {url} at {datetime.now()}')

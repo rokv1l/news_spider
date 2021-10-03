@@ -1,3 +1,4 @@
+from time import sleep
 from multiprocessing import Process, freeze_support
 
 import config
@@ -8,7 +9,7 @@ freeze_support()
 
 
 def main():
-    papers = (
+    urls = (
         'https://aif.ru',
         'https://as6400825.ru',
         'https://bezformata.com/',
@@ -47,11 +48,16 @@ def main():
         'https://vm.ru',
     )
     scheduler = Scheduler()
-    for paper in papers:
+    count = 0
+    for paper in urls:
+        if count >= 10:
+            count = 0
+            sleep(60*5)
         process = Process(target=portal_parser, args=(paper, ))
         process.daemon = True
         process.start()
         scheduler.add_job(IntervalJob(paper, portal_parser, args=(paper, ), delay=config.run_jobs_delay))
+        count += 1
     scheduler.run_pending()
 
 
