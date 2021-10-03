@@ -33,17 +33,14 @@ def portal_parser(url):
         for article in news_paper.articles:
             if client.news_parser.news.find_one({'url': article.url}):
                 continue
-            article.download()
-            if article.download_state == 1:
-                continue
-            article.parse()
-            if article.title or not article.text:
+            data = page_parser(article.url)
+            if data == 404 or not data or not data[1] or not data[0]:
                 continue
             client.news_parser.news.insert_one({
                 'source': url,
                 'url': article.url,
-                'title': article.title,
-                'content': article.text,
+                'title': data[0],
+                'content': data[1],
                 'datetime': datetime.now().isoformat()
             })
             count += 1
