@@ -27,23 +27,25 @@ def page_parser(url):
 
 
 def portal_parser(url):
-    news_paper = newspaper.build(url, language='ru')
+    news_paper = newspaper.build(url, language='ru', memoize_articles=False)
+    # это странное решение принято для оптимизации т.к. news_paper кушает слишком много памяти
+    articles = [article.url for article in news_paper.articles]
+    del news_paper
     with MongoClient(mongo_ip, mongo_port) as client:
         count = 0
-        for article in news_paper.articles:
-            if client.news_parser.news.find_one({'url': article.url}):
+        for article_url in articles:
+            if client.news_parser.news.find_one({'url': article_url}):
                 continue
-            data = page_parser(article.url)
+            data = page_parser(article_url)
             if data == 404 or not data or not data[1] or not data[0]:
                 continue
             client.news_parser.news.insert_one({
                 'source': url,
-                'url': article.url,
+                'url': article_url,
                 'title': data[0],
                 'content': data[1],
                 'datetime': datetime.now().isoformat()
             })
             count += 1
             sleep(config.request_delay)
-    del news_paper
     logger.info(f'found {count} new news in {url} at {datetime.now()}')
