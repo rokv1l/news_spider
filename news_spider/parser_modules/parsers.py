@@ -21,7 +21,7 @@ def page_parser(url):
         if article.download_state == 1:
             return 404
         article.parse()
-        return tuple((article.title, article.text, article.publish_date))
+        return [article.title, article.text, article.publish_date]
     except ArticleException:
         return None
 
