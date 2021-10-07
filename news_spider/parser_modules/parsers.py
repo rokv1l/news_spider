@@ -16,18 +16,19 @@ from config import mongo_ip, mongo_port
 
 def page_parser(url):
     try:
-        article = newspaper.Article(url, language='ru', config=newspaper_config)
+        article = Article(url, language='ru', config=newspaper_config)
         article.download()
         if article.download_state == 1:
             return 404
         article.parse()
-        return tuple((article.title, article.text))
+        return tuple((article.title, article.text, article.publish_date))
     except ArticleException:
         return None
 
 
 def portal_parser(url):
-    news_paper = newspaper.build(url, language='ru', memoize_articles=False)
+    # memoize_articles True говорит о том что уже полученные новости будут сохраняться в кеш и больше не будут получаться
+    news_paper = newspaper.build(url, language='ru', memoize_articles=True, config=newspaper_config)
     # это странное решение принято для оптимизации т.к. news_paper кушает слишком много памяти
     articles = [article.url for article in news_paper.articles]
     del news_paper
@@ -39,12 +40,14 @@ def portal_parser(url):
             data = page_parser(article_url)
             if data == 404 or not data or not data[1] or not data[0]:
                 continue
+            if not data[2]:
+                data[2] = datetime.now().isoformat()
             client.news_parser.news.insert_one({
                 'source': url,
                 'url': article_url,
                 'title': data[0],
                 'content': data[1],
-                'datetime': datetime.now().isoformat()
+                'datetime': data[2]
             })
             count += 1
             sleep(config.request_delay)
