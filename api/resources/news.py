@@ -1,5 +1,5 @@
 import re
-from datetime import datetime
+from itertools import islice
 
 import pymorphy2
 from flask import request
@@ -43,23 +43,12 @@ class News(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('limit', type=int, required=True)
         parser.add_argument('offset', type=int, required=True)
-        parser.add_argument('filter', type=str)
-        parser.add_argument('filter_by_field', type=str)
+        parser.add_argument('query', type=dict, required=True)
+        parser.add_argument('response', type=dict, required=True)
         args = parser.parse_args()
-        news = []
-
-        if args.get('filter') and args.get('filter_by_field') not in ['source', 'url', 'title', 'content', 'datetime']:
-            return {'content': 'filter_by_field must be required correctly if filter is defined'}, 400
-        elif args.get('filter') and args.get('filter_by_field'):
-            cursor = news_db_col.find({args.get('filter_by_field'): {"$regex": f"(?i).*{args.get('filter')}.*"}}, {'_id': 0}).skip(args['offset']).limit(args['limit'])
-        else:
-            cursor = news_db_col.find({}, {'_id': 0}).skip(args['offset']).limit(args['limit'])
-
-        for i in cursor:
-            if isinstance(i["datetime"], datetime):
-                i["datetime"] = i["datetime"].isoformat()
-            news.append(i)
-        return news, 200
+        args['response']['_id'] = 0
+        news = news_db_col.find(args.get('query'), args.get('response')).skip(args['offset']).limit(args['limit'])
+        return list(news), 200
 
 
 class NewsEntities(Resource):
@@ -69,16 +58,26 @@ class NewsEntities(Resource):
             return {'error': 'Authorization failed'}, 401
         parser = reqparse.RequestParser()
         parser.add_argument('date', type=str, required=True)
+        parser.add_argument('limit', type=int, required=True)
         args = parser.parse_args()
 
         cursor = news_db_col.find(
             {'datetime': {"$regex": f"(?i).*{args.get('date')}.*"}},
             {'_id': 0}
         )
-        result = set()
+        result = dict()
         for article in cursor:
-            result.update(set([entity.text for entity in get_entities(article['content'])]))
-        return list(result), 200
+            entities = [entity.text for entity in get_entities(article['content'])]
+            for entity in entities:
+                if not result.get(entity):
+                    result[entity] = 0
+                result[entity] += 1
+
+        # сортировка по значению
+        result = dict(sorted(result.items(), key=lambda item: item[1]))
+        # обрезка по лимиту
+        result = dict(islice(result.items(), args.get('limit')))
+        return result, 200
 
 
 class NewsTags(Resource):
@@ -88,6 +87,7 @@ class NewsTags(Resource):
             return {'error': 'Authorization failed'}, 401
         parser = reqparse.RequestParser()
         parser.add_argument('date', type=str, required=True)
+        parser.add_argument('limit', type=int, required=True)
         args = parser.parse_args()
         morph = pymorphy2.MorphAnalyzer()
 
@@ -95,15 +95,23 @@ class NewsTags(Resource):
             {'datetime': {"$regex": f"(?i).*{args.get('date')}.*"}},
             {'_id': 0}
         )
-        words = list()
+        result = dict()
         for article in cursor:
-            text = article['content']
+            text = re.sub(pattern=r'[,!?\.«»]\n', repl=' ', string=article['content']).replace('  ', ' ')
             for word in text.split(' '):
+                if not word or word == ' ':
+                    continue
                 processed_word = morph.parse(re.sub(pattern=r'[,!?\.«»\n]', repl='', string=word))[0]
                 if processed_word.tag.POS not in ('NOUN', 'ADJF', 'ADJS', 'VERB', 'INFN'):
                     continue
-                words.append(processed_word.normal_form)
-        result = {}
-        for word in set(words):
-            result[word] = words.count(word)
+
+                norm_form = processed_word.normal_form
+                if not result.get(norm_form):
+                    result[norm_form] = 0
+                result[norm_form] += 1
+
+        # сортировка по значению
+        result = dict(sorted(result.items(), key=lambda item: item[1]))
+        # обрезка по лимиту
+        result = dict(islice(result.items(), args.get('limit')))
         return result, 200
