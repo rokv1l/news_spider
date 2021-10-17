@@ -74,7 +74,7 @@ class NewsEntities(Resource):
                 result[entity] += 1
 
         # сортировка по значению
-        result = dict(sorted(result.items(), key=lambda item: item[1]))
+        result = dict(reversed(sorted(result.items(), key=lambda item: item[1])))
         # обрезка по лимиту
         result = dict(islice(result.items(), args.get('limit')))
         return result, 200
@@ -111,7 +111,7 @@ class NewsTags(Resource):
                 result[norm_form] += 1
 
         # сортировка по значению
-        result = dict(sorted(result.items(), key=lambda item: item[1]))
+        result = dict(reversed(sorted(result.items(), key=lambda item: item[1])))
         # обрезка по лимиту
         result = dict(islice(result.items(), args.get('limit')))
         return result, 200
