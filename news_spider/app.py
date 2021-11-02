@@ -3,6 +3,7 @@ from multiprocessing import Process, freeze_support
 
 import config
 from parser_modules.parsers import portal_parser
+from parser_modules.news_checker import news_checker
 from src.sсhedule_mp import IntervalJob, Scheduler
 
 freeze_support()
@@ -49,6 +50,7 @@ def main():
     )
     scheduler = Scheduler()
     count = 0
+    Process(target=news_checker).start()
     for paper in urls:
         if count >= 10:
             count = 0
