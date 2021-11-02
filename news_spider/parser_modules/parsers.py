@@ -40,7 +40,7 @@ def portal_parser(url):
             data = page_parser(article_url)
             if data == 404 or not data or not data[1] or not data[0]:
                 continue
-            if not data[2]:
+            if not data[2] or datetime.fromisoformat(data[2]) > datetime.now():
                 data[2] = datetime.now().isoformat()
             client.news_parser.news.insert_one({
                 'source': url,
