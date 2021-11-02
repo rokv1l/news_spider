@@ -17,7 +17,7 @@ def news_checker():
         news = list(news_db_col.find({'datetime': {'$gte': start, '$lt': end}}, {'_id': 0}))
         random.shuffle(news)
         for news_item in news:
-            data = page_parser(news_item)
+            data = page_parser(news_item['url'])
             if not data:
                 # Декоратор функции parse_news сам сделает лог об ошибке
                 continue
