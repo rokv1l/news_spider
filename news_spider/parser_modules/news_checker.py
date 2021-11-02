@@ -26,14 +26,14 @@ def news_checker():
                 changed_news_col.insert_one({
                     'url': news_item['url'],
                     'title': news_item['title'],
-                    'content': news_item['text'],
+                    'content': news_item['content'],
                     'datetime': datetime.now().isoformat(),
                     'action': 'deleted'
                 })
             else:
                 logger.info(f'find changed article {news_item["url"]}')
                 title, text, publish_date = data
-                if title != news_item['title'] or text != news_item['text']:
+                if title != news_item['title'] or text != news_item['content']:
                     changed_news_col.insert_one({
                         'url': news_item['url'],
                         'title': title,
