@@ -32,7 +32,7 @@ def news_checker():
                 })
             else:
                 logger.info(f'find changed article {news_item["url"]}')
-                title, text = data
+                title, text, publish_date = data
                 if title != news_item['title'] or text != news_item['text']:
                     changed_news_col.insert_one({
                         'url': news_item['url'],
