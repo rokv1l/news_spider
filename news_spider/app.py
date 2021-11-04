@@ -50,7 +50,6 @@ def main():
     )
     scheduler = Scheduler()
     count = 0
-    Process(target=news_checker).start()
     for paper in urls:
         if count >= 10:
             count = 0
@@ -60,6 +59,8 @@ def main():
         process.start()
         scheduler.add_job(IntervalJob(paper, portal_parser, args=(paper, ), delay=config.run_jobs_delay))
         count += 1
+    Process(target=news_checker).start()
+    scheduler.add_job(IntervalJob('news_checker', news_checker, delay=config.news_checker_delay))
     scheduler.run_pending()
 
 
