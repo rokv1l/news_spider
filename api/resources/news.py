@@ -1,5 +1,6 @@
 import re
 from itertools import islice
+from datetime import datetime
 
 import pymorphy2
 from flask import request
@@ -51,7 +52,12 @@ class News(Resource):
             news = news_db_col.find(args.get('query'), args.get('response')).skip(args['offset']).limit(args['limit'])
         else:
             news = news_db_col.find({}, {'_id': 0}).skip(args['offset']).limit(args['limit'])
-        return list(news), 200
+        result = []
+        for article in news:
+            if isinstance(article['datetime'], datetime):
+                article['datetime'] = article['datetime'].isoformat()
+            result.append(article)
+        return result, 200
 
 
 class NewsEntities(Resource):
