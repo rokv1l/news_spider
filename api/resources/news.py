@@ -43,8 +43,8 @@ class News(Resource):
         parser = reqparse.RequestParser()
         parser.add_argument('limit', type=int, required=True)
         parser.add_argument('offset', type=int, required=True)
-        parser.add_argument('query', type=dict, required=True)
-        parser.add_argument('response', type=dict, required=True)
+        parser.add_argument('query')
+        parser.add_argument('response')
         args = parser.parse_args()
         args['response']['_id'] = 0
         news = news_db_col.find(args.get('query'), args.get('response')).skip(args['offset']).limit(args['limit'])
