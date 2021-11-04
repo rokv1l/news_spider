@@ -46,8 +46,11 @@ class News(Resource):
         parser.add_argument('query')
         parser.add_argument('response')
         args = parser.parse_args()
-        args['response']['_id'] = 0
-        news = news_db_col.find(args.get('query'), args.get('response')).skip(args['offset']).limit(args['limit'])
+        if args.get('query') and args.get('response'):
+            args['response']['_id'] = 0
+            news = news_db_col.find(args.get('query'), args.get('response')).skip(args['offset']).limit(args['limit'])
+        else:
+            news = news_db_col.find({}, {'_id': 0}).skip(args['offset']).limit(args['limit'])
         return list(news), 200
 
 
