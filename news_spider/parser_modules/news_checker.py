@@ -7,7 +7,7 @@ from config import request_delay, get_logger, logs_path
 from src.database import news_db_col, changed_news_col
 from parser_modules.parsers import page_parser
 
-logger = get_logger(__name__, logs_path + __name__ + '.log', backups=2)
+logger = get_logger(__name__, logs_path + 'news_spider.parser_modules.news_checker.log', backups=2)
 
 
 def news_checker():
