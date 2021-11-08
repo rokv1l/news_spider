@@ -5,14 +5,15 @@ from os import getenv
 
 from newspaper import Config
 
-if not os.path.exists('/logs'):
-    os.mkdir('/logs')
-
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
+logs_path = '/opt/data/news_spider/'
+
+if not os.path.exists(logs_path):
+    os.mkdir(logs_path)
 
 
-def get_logger(name, path, level=logging.INFO, backups=5):
-    handler = RotatingFileHandler(path, maxBytes=1024*1024*5, backupCount=backups, encoding='utf-8')
+def get_logger(name, path, level=logging.INFO, size=1024*1024*5, backups=5):
+    handler = RotatingFileHandler(path, maxBytes=size, backupCount=backups, encoding='utf-8')
     handler.setFormatter(formatter)
 
     logger = logging.getLogger(name)
@@ -20,6 +21,45 @@ def get_logger(name, path, level=logging.INFO, backups=5):
     logger.addHandler(handler)
     return logger
 
+
+urls = (
+        'https://aif.ru',
+        # 'https://as6400825.ru',  # Сайт сломан, требует от меня установелнный php, бред
+        'https://bezformata.com/',
+        'https://www.bfm.ru',
+        'https://echo.msk.ru/',
+        'https://icmos.ru/',
+        # 'https://msk.inregiontoday.ru',  # Паук не может распарсить этот сайт
+        'https://www.interfax.ru/',
+        'https://www.kommersant.ru/',
+        'https://www.rostov.kp.ru/',
+        'https://lenta.ru',
+        'https://www.m24.ru/news',
+        'https://mk.ru/news',
+        'https://www.mn.ru/',
+        'https://mockva.ru/',
+        'https://www.molnet.ru',
+        'https://moscow.ru.today/',
+        # 'http://mosday.ru/news',    # Паук не может распарсить этот сайт
+        'https://www.moskva-tyt.ru',    # тут возможно забанили при тестах
+        'https://moslenta.ru',
+        'https://mtdi.mosreg.ru/',
+        'https://mperspektiva.ru/',
+        'http://msk-news.net/',
+        # 'https://www.mskagency.ru',  # Паук не может распарсить этот сайт
+        'https://msknovosti.ru/',
+        # 'https://novayagazeta.ru/',  # Паук не может распарсить этот сайт
+        'https://www.pravda.ru/',
+        'https://www.rbc.ru',
+        'https://regnum.ru/',
+        'https://rg.ru/',
+        'https://ria.ru',
+        'https://riamo.ru/',
+        'https://russian.rt.com',
+        'https://tass.ru',
+        'https://tvrain.ru/',
+        'https://vm.ru',
+    )
 
 mongo_ip = getenv('MONGO_IP')
 mongo_port = int(getenv('MONGO_PORT'))
@@ -38,3 +78,4 @@ headers = {
 newspaper_config.headers = headers
 newspaper_config.request_timeout = 10
 newspaper_config.browser_user_agent = user_agent
+

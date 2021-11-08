@@ -11,6 +11,7 @@ logger = get_logger('news_checker', 'logs/news_checker.log', backups=2)
 
 
 def news_checker():
+    logger.debug('news_checker start')
     """Посещает страницы новостей и проверяет на изменения или удаление"""
     try:
         start = datetime.fromisoformat(f'{date.today().isoformat()}T00:00:00')
@@ -25,7 +26,7 @@ def news_checker():
                 if not data:
                     continue
                 elif data == 404:
-                    logger.info(f'find deleted from site article {news_item["url"]}')
+                    logger.info(f'find deleted article {news_item["url"]}')
                     changed_news_col.insert_one({
                         'url': news_item['url'],
                         'title': news_item['title'],

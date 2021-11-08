@@ -10,10 +10,11 @@ import config
 from config import newspaper_config, get_logger
 from config import mongo_ip, mongo_port
 
-logger = get_logger('parsers', 'logs/parsers.log', backups=2)
+logger = get_logger(__name__, 'logs/parsers.log', backups=2)
 
 
 def page_parser(url):
+    logger.debug(f'page_parser {url}')
     try:
         article = Article(url, language='ru', config=newspaper_config)
         article.download()
@@ -26,7 +27,7 @@ def page_parser(url):
 
 
 def portal_parser(url):
-    logger.info(f'portal_parser {url}')
+    logger.debug(f'portal_parser {url}')
     try:
         # memoize_articles True говорит о том что уже полученные новости будут сохраняться в кеш и больше не будут получаться
         news_paper = newspaper.build(url, language='ru', memoize_articles=True, config=newspaper_config)
