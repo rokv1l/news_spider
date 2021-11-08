@@ -22,7 +22,7 @@ services:
     env_file:
       - .env
     volumes:
-      - ${LOGS_PATH}:/news_spider/logs
+      - ${LOGS_PATH}:${LOGS_PATH}
     restart: unless-stopped
     tty: True
     working_dir: /news_spider
