@@ -18,7 +18,10 @@ from natasha import (
 )
 
 import config
+from config import get_logger, logs_path
 from src.database import news_db_col
+
+logger = get_logger(__name__, logs_path + __name__ + '.log', backups=2)
 
 segmenter = Segmenter()
 emb = NewsEmbedding()
@@ -38,6 +41,7 @@ def get_entities(text):
 
 class News(Resource):
     def get(self):
+        logger.debug(f'News.get ')
         token = request.headers.get("authorization", "").replace("Bearer ", "")
         if token != config.token:
             return {'error': 'Authorization failed'}, 401
