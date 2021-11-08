@@ -33,9 +33,9 @@ def portal_parser(url):
         # это странное решение принято для оптимизации т.к. news_paper кушает слишком много памяти
         articles = [article.url for article in news_paper.articles]
         del news_paper
-        with MongoClient(mongo_ip, mongo_port) as client:
-            count = 0
-            for article_url in articles:
+        count = 0
+        for article_url in articles:
+            with MongoClient(mongo_ip, mongo_port) as client:
                 if client.news_parser.news.find_one({'url': article_url}):
                     continue
                 data = page_parser(article_url)
@@ -52,6 +52,7 @@ def portal_parser(url):
                 })
                 count += 1
                 sleep(config.request_delay)
+                client.close()
         logger.info(f'found {count} new news in {url} at {datetime.now()}')
     except Exception:
         logger.exception(format_exc())
