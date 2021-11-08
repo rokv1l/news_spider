@@ -3,11 +3,11 @@ from time import sleep
 from traceback import format_exc
 from datetime import datetime, date, timedelta
 
-from config import request_delay, get_logger
+from config import request_delay, get_logger, logs_path
 from src.database import news_db_col, changed_news_col
 from parser_modules.parsers import page_parser
 
-logger = get_logger('news_checker', 'logs/news_checker.log', backups=2)
+logger = get_logger(__name__, logs_path + __name__ + '.log', backups=2)
 
 
 def news_checker():

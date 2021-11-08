@@ -7,10 +7,9 @@ from newspaper import ArticleException, Article
 from pymongo import MongoClient
 
 import config
-from config import newspaper_config, get_logger
-from config import mongo_ip, mongo_port
+from config import newspaper_config, get_logger, logs_path, mongo_ip, mongo_port
 
-logger = get_logger(__name__, 'logs/parsers.log', backups=2)
+logger = get_logger(__name__, logs_path + __name__ + '.log', backups=2)
 
 
 def page_parser(url):

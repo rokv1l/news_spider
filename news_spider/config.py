@@ -6,7 +6,7 @@ from os import getenv
 from newspaper import Config
 
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-logs_path = '/opt/data/news_spider/'
+logs_path = '/opt/news_spider_logs/'
 
 if not os.path.exists(logs_path):
     os.mkdir(logs_path)
