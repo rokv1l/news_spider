@@ -4,7 +4,7 @@ from logging.handlers import RotatingFileHandler
 from os import getenv
 
 formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
-logs_path = '/opt/data/news_spider/'
+logs_path = getenv('LOGS_PATH')
 
 if not os.path.exists(logs_path):
     os.mkdir(logs_path)
