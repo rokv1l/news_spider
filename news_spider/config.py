@@ -9,7 +9,7 @@ formatter = logging.Formatter('%(asctime)s %(levelname)s %(message)s')
 logs_path = getenv('LOGS_PATH')
 
 if not os.path.exists(logs_path):
-    os.mkdir(logs_path)
+    os.makedirs(logs_path)
 
 
 def get_logger(name, path, level=logging.INFO, size=1024*1024*5, backups=5):
