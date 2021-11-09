@@ -6,7 +6,7 @@ from traceback import format_exc
 import newspaper
 from newspaper import ArticleException, Article
 from pymongo import MongoClient
-from pymongo.errors import AutoReconnect
+from pymongo.errors import AutoReconnect, ServerSelectionTimeoutError
 
 import config
 from config import newspaper_config, get_logger, logs_path, mongo_ip, mongo_port
@@ -55,7 +55,7 @@ def portal_parser(url):
                             'datetime': data[2]
                         })
                         break
-                    except AutoReconnect:
+                    except (AutoReconnect, ServerSelectionTimeoutError):
                         pass
                 count += 1
                 sleep(config.request_delay)
