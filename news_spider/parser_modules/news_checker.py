@@ -1,4 +1,5 @@
 import random
+import logging
 from time import sleep
 from traceback import format_exc
 from datetime import datetime, date, timedelta
@@ -7,7 +8,7 @@ from config import request_delay, get_logger, logs_path
 from src.database import news_db_col, changed_news_col
 from parser_modules.parsers import page_parser
 
-logger = get_logger(__name__, logs_path + 'news_spider.parser_modules.news_checker.log', backups=2)
+logger = get_logger(__name__, logs_path + 'news_spider.parser_modules.news_checker.log', backups=2, level=logging.INFO)
 
 
 def news_checker():
@@ -49,5 +50,5 @@ def news_checker():
             start -= timedelta(days=1)
             end -= timedelta(days=1)
     except Exception:
-        logger.exception(format_exc())
+        logger.exception(format_exc)
         raise

@@ -11,7 +11,7 @@ from pymongo.errors import AutoReconnect
 import config
 from config import newspaper_config, get_logger, logs_path, mongo_ip, mongo_port
 
-logger = get_logger(__name__, logs_path + 'news_spider.parser_modules.parsers.log', backups=2)
+logger = get_logger(__name__, logs_path + 'news_spider.parser_modules.parsers.log', backups=2, level=logging.INFO)
 
 
 def page_parser(url):
@@ -54,12 +54,12 @@ def portal_parser(url):
                             'content': data[1],
                             'datetime': data[2]
                         })
-                        count += 1
                         break
                     except AutoReconnect:
                         pass
+                count += 1
                 sleep(config.request_delay)
         logger.info(f'found {count} new news in {url} at {datetime.now()}')
     except Exception:
-        logger.exception(format_exc())
+        logger.exception(format_exc)
         raise
