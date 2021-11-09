@@ -6,6 +6,7 @@ from traceback import format_exc
 import newspaper
 from newspaper import ArticleException, Article
 from pymongo import MongoClient
+from pymongo.errors import AutoReconnect
 
 import config
 from config import newspaper_config, get_logger, logs_path, mongo_ip, mongo_port
@@ -35,25 +36,29 @@ def portal_parser(url):
         articles = [article.url for article in news_paper.articles]
         del news_paper
         count = 0
-        for article_url in articles:
-            with MongoClient(mongo_ip, mongo_port) as client:
-                if client.news_parser.news.find_one({'url': article_url}):
-                    continue
-                data = page_parser(article_url)
-                if data == 404 or not data or not data[1] or not data[0]:
-                    continue
-                if not data[2] or data[2].replace(tzinfo=None) > datetime.now().replace(tzinfo=None):
-                    data[2] = datetime.now().isoformat()
-                client.news_parser.news.insert_one({
-                    'source': url,
-                    'url': article_url,
-                    'title': data[0],
-                    'content': data[1],
-                    'datetime': data[2]
-                })
-                count += 1
+        with MongoClient(mongo_ip, mongo_port) as client:
+            for article_url in articles:
+                while True:
+                    try:
+                        if client.news_parser.news.find_one({'url': article_url}):
+                            continue
+                        data = page_parser(article_url)
+                        if data == 404 or not data or not data[1] or not data[0]:
+                            continue
+                        if not data[2] or data[2].replace(tzinfo=None) > datetime.now().replace(tzinfo=None):
+                            data[2] = datetime.now().isoformat()
+                        client.news_parser.news.insert_one({
+                            'source': url,
+                            'url': article_url,
+                            'title': data[0],
+                            'content': data[1],
+                            'datetime': data[2]
+                        })
+                        count += 1
+                        break
+                    except AutoReconnect:
+                        pass
                 sleep(config.request_delay)
-                client.close()
         logger.info(f'found {count} new news in {url} at {datetime.now()}')
     except Exception:
         logger.exception(format_exc())
