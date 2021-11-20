@@ -12,7 +12,6 @@ logger = get_logger(__name__, logs_path + 'news_spider.parser_modules.news_check
 
 
 def news_checker():
-    logger.debug('news_checker start')
     """Посещает страницы новостей и проверяет на изменения или удаление"""
     try:
         start = datetime.fromisoformat(f'{date.today().isoformat()}T00:00:00')
@@ -27,7 +26,6 @@ def news_checker():
                 if not data:
                     continue
                 elif data == 404:
-                    logger.info(f'find deleted article {news_item["url"]}')
                     changed_news_col.insert_one({
                         'url': news_item['url'],
                         'title': news_item['title'],
@@ -36,7 +34,6 @@ def news_checker():
                         'action': 'deleted'
                     })
                 else:
-                    logger.info(f'find changed article {news_item["url"]}')
                     title, text, publish_date = data
                     if title != news_item['title'] or text != news_item['content']:
                         changed_news_col.insert_one({
@@ -50,5 +47,4 @@ def news_checker():
             start -= timedelta(days=1)
             end -= timedelta(days=1)
     except Exception:
-        logger.exception(format_exc)
         raise
