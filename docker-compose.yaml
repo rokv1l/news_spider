@@ -26,6 +26,10 @@ services:
     restart: unless-stopped
     tty: True
     working_dir: /news_spider
+    deploy:
+      resources:
+        limits:
+          memory: 2gb
 
   spider_news_mongo:
     image: mongo
@@ -34,6 +38,10 @@ services:
       - mongodb:/data/db
     restart: unless-stopped
     tty: True
+    deploy:
+      resources:
+        limits:
+          memory: 1gb
 
   news_spider_api:
     build:
