@@ -1,4 +1,4 @@
-version: "3.9"
+version: "3.3"
 services:
 
   bot:
@@ -29,19 +29,21 @@ services:
     deploy:
       resources:
         limits:
-          memory: 2gb
+          cpus: '3.25'
+          memory: 5gb
 
   spider_news_mongo:
     image: mongo
     container_name: spider_news_mongo
     volumes:
-      - mongodb:/data/db
+      - /opt/disk/news_spider_mongo:/data/db
     restart: unless-stopped
     tty: True
     deploy:
       resources:
         limits:
-          memory: 1gb
+          cpus: '5.25'
+          memory: 10gb
 
   news_spider_api:
     build:
@@ -56,6 +58,3 @@ services:
     restart: unless-stopped
     tty: True
     working_dir: /api
-
-volumes:
-  mongodb:
