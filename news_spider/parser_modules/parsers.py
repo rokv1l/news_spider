@@ -1,17 +1,15 @@
-import logging
+
 from time import sleep
 from datetime import datetime
-from traceback import format_exc
 
 import newspaper
 from newspaper import ArticleException, Article
+from loguru import logger
 from pymongo import MongoClient
 from pymongo.errors import AutoReconnect, ServerSelectionTimeoutError
 
 import config
-from config import newspaper_config, get_logger, logs_path, mongo_ip, mongo_port
-
-logger = get_logger(__name__, logs_path + 'news_spider.parser_modules.parsers.log', backups=2, level=logging.INFO)
+from config import newspaper_config, logs_path, mongo_ip, mongo_port
 
 
 def page_parser(url):

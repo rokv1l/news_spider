@@ -1,13 +1,11 @@
 import random
-import logging
 from time import sleep
+from loguru import logger
 from datetime import datetime, date, timedelta
 
-from config import request_delay, get_logger, logs_path
+from config import request_delay, logs_path
 from src.database import news_db_col, changed_news_col
 from parser_modules.parsers import page_parser
-
-logger = get_logger(__name__, logs_path + 'news_spider.parser_modules.news_checker.log', backups=2, level=logging.INFO)
 
 
 def news_checker():
