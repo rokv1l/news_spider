@@ -1,7 +1,6 @@
 import random
 import logging
 from time import sleep
-from traceback import format_exc
 from datetime import datetime, date, timedelta
 
 from config import request_delay, get_logger, logs_path
@@ -13,10 +12,10 @@ logger = get_logger(__name__, logs_path + 'news_spider.parser_modules.news_check
 
 def news_checker():
     """Посещает страницы новостей и проверяет на изменения или удаление"""
-    try:
-        start = datetime.fromisoformat(f'{date.today().isoformat()}T00:00:00')
-        end = start + timedelta(days=1)
-        while True:
+    start = datetime.fromisoformat(f'{date.today().isoformat()}T00:00:00')
+    end = start + timedelta(days=1)
+    while True:
+        try:
             news = list(news_db_col.find({'datetime': {'$gte': start, '$lt': end}}, {'_id': 0}))
             if not news:
                 break
@@ -46,5 +45,6 @@ def news_checker():
                 sleep(request_delay)
             start -= timedelta(days=1)
             end -= timedelta(days=1)
-    except Exception:
-        raise
+        except Exception:
+            logger.exception('Error')
+            sleep(60*5)
