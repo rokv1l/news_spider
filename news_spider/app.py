@@ -7,16 +7,16 @@ from parser_modules.parsers import portal_parser
 from parser_modules.news_checker import news_checker
 
 
-def demon(urls):
+def demon():
     while True:
-        for url in urls:
+        for url in config.urls:
             try:
                 portal_parser(url)
             except Exception:
                 logger.exception('Something went wrong')
 
 def main():
-    Thread(target=portal_parser, args=(config.urls, ), daemon=True).start()
+    Thread(target=demon, daemon=True).start()
     Thread(target=news_checker, daemon=True).start()
 
 
