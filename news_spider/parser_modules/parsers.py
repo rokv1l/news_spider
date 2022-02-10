@@ -25,6 +25,7 @@ def page_parser(url):
 
 
 def portal_parser(url):
+    logger.info(f'parsing url {url}')
     news_paper = newspaper.build(url, language='ru', memoize_articles=True, config=newspaper_config)
     try:
         count = 0
