@@ -16,7 +16,8 @@ def demon():
                 logger.exception('Something went wrong')
 
 def main():
-    t = Thread(target=demon, daemon=True).start()
+    t = Thread(target=demon, daemon=True)
+    t.start()
     Thread(target=news_checker, daemon=True).start()
     t.join()
 
