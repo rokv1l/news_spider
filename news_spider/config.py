@@ -14,12 +14,10 @@ logger.add(f'{logs_path}data.log', format="{name} {time} {level} {message}", lev
 
 urls = (
         'https://aif.ru',
-        # 'https://as6400825.ru',  # Сайт сломан, требует от меня установелнный php, бред
         'https://bezformata.com/',
         'https://www.bfm.ru',
         'https://echo.msk.ru/',
         'https://icmos.ru/',
-        # 'https://msk.inregiontoday.ru',  # Паук не может распарсить этот сайт
         'https://www.interfax.ru/',
         'https://www.kommersant.ru/',
         'https://www.rostov.kp.ru/',
@@ -30,15 +28,12 @@ urls = (
         'https://mockva.ru/',
         'https://www.molnet.ru',
         'https://moscow.ru.today/',
-        # 'http://mosday.ru/news',    # Паук не может распарсить этот сайт
         'https://www.moskva-tyt.ru',    # тут возможно забанили при тестах
         'https://moslenta.ru',
         'https://mtdi.mosreg.ru/',
         'https://mperspektiva.ru/',
         'http://msk-news.net/',
-        # 'https://www.mskagency.ru',  # Паук не может распарсить этот сайт
         'https://msknovosti.ru/',
-        # 'https://novayagazeta.ru/',  # Паук не может распарсить этот сайт
         'https://www.pravda.ru/',
         'https://www.rbc.ru',
         'https://regnum.ru/',
