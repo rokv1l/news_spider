@@ -1,24 +1,23 @@
+from loguru import logger
 from time import sleep
-from multiprocessing import Process, freeze_support
+from threading import Thread
 
 import config
 from parser_modules.parsers import portal_parser
 from parser_modules.news_checker import news_checker
 
-freeze_support()
 
+def demon(urls):
+    while True:
+        for url in urls:
+            try:
+                portal_parser(url)
+            except Exception:
+                logger.exception('Something went wrong')
 
 def main():
-    count = 0
-    for paper in config.urls:
-        if count >= 5:
-            count = 0
-            sleep(60*5)
-        process = Process(target=portal_parser, args=(paper, ))
-        process.daemon = True
-        process.start()
-        count += 1
-    Process(target=news_checker).start()
+    Thread(target=portal_parser, args=(config.urls, ), daemon=True).start()
+    Thread(target=news_checker, daemon=True).start()
 
 
 if __name__ == '__main__':
