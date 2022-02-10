@@ -12,11 +12,12 @@ def demon():
         for url in config.urls:
             try:
                 portal_parser(url)
+                logger.info(f'{url} parsed successful')
             except Exception:
                 logger.exception('Something went wrong')
 
 def main():
-    t = Thread(target=demon, daemon=True)
+    t = Thread(target=demon)
     t.start()
     Thread(target=news_checker, daemon=True).start()
     t.join()
