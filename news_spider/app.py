@@ -13,7 +13,7 @@ def main():
     t_pull = []
     next_paper_index = 0
     while True:
-        while len(t_pull) <= config.max_pull_lenth:
+        while len(t_pull) < config.max_pull_lenth:
             if next_paper_index >= len(config.urls):
                 next_paper_index = 0
             t =  Thread(target=portal_parser, args=[config.urls[next_paper_index]])
