@@ -64,5 +64,5 @@ newspaper_config.headers = headers
 newspaper_config.request_timeout = 10
 newspaper_config.browser_user_agent = user_agent
 
-max_pull_lenth = 5
+max_pull_lenth = 3
 main_loop_delay = 30
