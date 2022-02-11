@@ -34,11 +34,14 @@ def portal_parser(url):
                 try:
                     if client.news_parser.news.find_one({'url': article.url}):
                         continue
+                    
                     data = page_parser(article.url)
                     if data == 404 or not data or not data[1] or not data[0]:
                         continue
+                    
                     if not data[2] or data[2].replace(tzinfo=None) > datetime.now().replace(tzinfo=None):
                         data[2] = datetime.now().isoformat()
+                        
                     client.news_parser.news.insert_one({
                         'source': url,
                         'url': article.url,
@@ -48,8 +51,11 @@ def portal_parser(url):
                     })
                 except (AutoReconnect, ServerSelectionTimeoutError):
                     logger.error('db error')
+                    
                 count += 1
                 sleep(config.request_delay)
+                
+            logger.info(f'{url} parsed successful')
     except Exception:
         logger.exception('Error')
 
