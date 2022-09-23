@@ -9,12 +9,10 @@ from flask_restful import Resource
 from flask_restful import reqparse
 from natasha import (
     Segmenter,
-
     NewsEmbedding,
     NewsMorphTagger,
     NewsSyntaxParser,
     NewsNERTagger,
-
     Doc
 )
 
@@ -87,7 +85,6 @@ class NewsEntities(Resource):
             args = parser.parse_args()
             logger.debug(f'{request.remote_addr} NewsEntities.get params {args}')
 
-            # TODO Сделать проверку args.get('date') на соответствие формату date и datetime
             cursor = news_db_col.find(
                 {'datetime': {"$regex": f"(?i).*{args.get('date')}.*"}},
                 {'_id': 0}
